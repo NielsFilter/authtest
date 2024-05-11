@@ -84,7 +84,7 @@ export class AddEditComponent implements OnInit {
             .pipe(first())
             .subscribe({
                 next: () => {
-                    this.alertService.success(message, { keepAfterRouteChange: true });
+                    this.alertService.success(message);
                     this.router.navigateByUrl('/admin/accounts');
                 },
                 error: error => {

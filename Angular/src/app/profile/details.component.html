@@ -8,7 +8,10 @@
                     <h5 class="card-title mb-0">{{account.title}} {{account.firstName}} {{account.lastName}}</h5>
                     <div class="text-muted mb-2">{{account.email}}</div>
                     <a routerLink="update" class="btn btn-primary">Update Profile</a>
-                    <button (click)="showSuccess" class="btn btn-success">Success</button>
+                    <button (click)="showSuccess()" class="btn btn-success">Success</button>
+                    <button (click)="showWarn()" class="btn btn-warning">Warn</button>
+                    <button (click)="showInfo()" class="btn btn-info">Info</button>
+                    <button (click)="showError()" class="btn btn-danger">Error</button>
                 </div>
             </div>
         </div>

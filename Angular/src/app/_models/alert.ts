@@ -1,11 +1,9 @@
 export class Alert {
     id?: string;
-    title?: string;
-    type?: AlertType;
     message?: string;
-    autoClose?: boolean;
-    keepAfterRouteChange?: boolean;
-    fade?: boolean;
+    type?: AlertType;
+    cssClass?: string
+    autoCloseDelay?: number;
 
     constructor(init?: Partial<Alert>) {
         Object.assign(this, init);
@@ -17,10 +15,4 @@ export enum AlertType {
     Error,
     Info,
     Warning
-}
-
-export class AlertOptions {
-    id?: string;
-    autoClose?: boolean;
-    keepAfterRouteChange?: boolean;
 }

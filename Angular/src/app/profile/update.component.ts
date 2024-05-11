@@ -54,7 +54,7 @@ export class UpdateComponent implements OnInit {
             .pipe(first())
             .subscribe({
                 next: () => {
-                    this.alertService.success('Update successful', { keepAfterRouteChange: true });
+                    this.alertService.success('Update successful');
                     this.router.navigate(['../'], { relativeTo: this.route });
                 },
                 error: error => {
@@ -70,7 +70,7 @@ export class UpdateComponent implements OnInit {
             this.accountService.delete(this.account.id!)
                 .pipe(first())
                 .subscribe(() => {
-                    this.alertService.success('Account deleted successfully', { keepAfterRouteChange: true });
+                    this.alertService.success('Account deleted successfully');
                 });
         }
     }

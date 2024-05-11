@@ -2,7 +2,7 @@
 import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
-import { Alert, AlertOptions, AlertType } from '@app/_models';
+import { Alert, AlertType } from '@app/_models';
 
 @Injectable({ providedIn: 'root' })
 export class AlertService {
@@ -14,44 +14,25 @@ export class AlertService {
         return this.subject.asObservable().pipe(filter(x => x && x.id === id));
     }
 
-    // convenience methods
-    //todo:
-    // success(title: string, message: string, options?: AlertOptions) {
-    //     this.alert(new Alert({ ...options, type: AlertType.Success, message, title: title }));
-    // }
-
-    // error(title: string, message: string, options?: AlertOptions) {
-    //     this.alert(new Alert({ ...options, type: AlertType.Error, message, title: title }));
-    // }
-
-    // info(title: string, message: string, options?: AlertOptions) {
-    //     this.alert(new Alert({ ...options, type: AlertType.Info, message, title: title }));
-    // }
-
-    // warn(title: string, message: string, options?: AlertOptions) {
-    //     this.alert(new Alert({ ...options, type: AlertType.Warning, message, title: title }));
-    // }
-
-    success(title: string, options?: AlertOptions) {
-        this.alert(new Alert({ ...options, type: AlertType.Success, message: '', title: title }));
+    success(message: string, autoCloseDelay?: number) {
+        this.alert(new Alert({type: AlertType.Success, message, autoCloseDelay }));
     }
 
-    error(title: string,  options?: AlertOptions) {
-        this.alert(new Alert({ ...options, type: AlertType.Error, message: '', title: title }));
+    error(message: string, autoCloseDelay?: number) {
+        this.alert(new Alert({type: AlertType.Error, message, autoCloseDelay }));
     }
 
-    info(title: string, options?: AlertOptions) {
-        this.alert(new Alert({ ...options, type: AlertType.Info, message: '', title: title }));
+    info(message: string, autoCloseDelay?: number) {
+        this.alert(new Alert({type: AlertType.Info, message, autoCloseDelay }));
     }
 
-    warn(title: string, options?: AlertOptions) {
-        this.alert(new Alert({ ...options, type: AlertType.Warning, message: '', title: title }));
+    warn(message: string, autoCloseDelay?: number) {
+        this.alert(new Alert({type: AlertType.Warning, message, autoCloseDelay }));
     }
 
     // core alert method
     alert(alert: Alert) {
         alert.id = alert.id || this.defaultId;
-        alert.autoClose = (alert.autoClose === undefined ? true : alert.autoClose);
         this.subject.next(alert);
     }
 
