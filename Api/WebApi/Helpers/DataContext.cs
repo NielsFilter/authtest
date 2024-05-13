@@ -6,6 +6,7 @@ using WebApi.Entities;
 public class DataContext : DbContext
 {
     public DbSet<Account> Accounts { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
     
     private readonly IConfiguration Configuration;
 

@@ -11,10 +11,10 @@
 <!--    </nav>-->
 
 <div class="wrapper">
-  <nav id="sidebar" class="sidebar js-sidebar" [ngClass]="sideCollapsed ? 'collapse' : ''" *ngIf="account">
+  <nav id="sidebar" class="sidebar js-sidebar" [ngClass]="sideCollapsed ? 'collapse' : 'show'" *ngIf="account">
     <div class="sidebar-content js-simplebar">
       <a class="sidebar-brand" href="index.html">
-        <span class="align-middle">AdminKit</span>
+        <span class="align-middle">filteredcode</span>
       </a>
 
       <ul class="sidebar-nav">
@@ -82,7 +82,7 @@
           <li class="nav-item dropdown">
             <a class="nav-icon dropdown-toggle" href="#" id="alertsDropdown" data-bs-toggle="dropdown">
               <div class="position-relative">
-                <i class="fa-regular fa-bell"></i>
+                <i class="align-middle fa-regular fa-bell"></i>
                 <span class="indicator">4</span>
               </div>
             </a>
@@ -124,7 +124,7 @@
           <li class="nav-item dropdown">
             <a class="nav-icon dropdown-toggle" href="#" id="messagesDropdown" data-bs-toggle="dropdown">
               <div class="position-relative">
-                <i class="align-middle" data-feather="message-square"></i>
+                <i class="align-middle fa-regular fa-message"></i>
               </div>
             </a>
             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0" aria-labelledby="messagesDropdown">
@@ -189,21 +189,21 @@
             </div>
           </li>
           <li class="nav-item dropdown">
-            <a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#" data-bs-toggle="dropdown">
-              <i class="align-middle" data-feather="settings"></i>
+            <a class="nav-icon dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown" data-bs-target="#profileDropDown">
+              <i class="align-middle fa-solid fa-gear"></i>
             </a>
 
-            <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
-              <img src="assets/img/avatars/avatar.jpg" class="avatar img-fluid rounded me-1" alt="Charles Hall" /> <span class="text-dark">Charles Hall</span>
+            <a class="nav-link dropdown-toggle d-inline-block" href="#" data-bs-toggle="dropdown"  data-bs-target="#profileDropDown">
+              <img src="assets/img/avatars/avatar.jpg" class="avatar img-fluid rounded me-1" alt="{{account.firstName}} {{account.lastName}}" />
+              <span class="text-dark d-none d-sm-inline-block">{{account.firstName}} {{account.lastName}}</span>
             </a>
-            <div class="dropdown-menu dropdown-menu-end">
-              <a class="dropdown-item" href="/profile"><i class="align-middle me-1" data-feather="user"></i> Profile</a>
-              <a class="dropdown-item" href="#"><i class="align-middle me-1" data-feather="pie-chart"></i> Analytics</a>
+            <div class="dropdown-menu dropdown-menu-end" id="profileDropDown">
+              <a class="dropdown-item" href="/profile"> <i class="align-middle me-1 fa-regular fa-user"></i> Profile</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="index.html"><i class="align-middle me-1" data-feather="settings"></i> Settings & Privacy</a>
-              <a class="dropdown-item" href="#"><i class="align-middle me-1" data-feather="help-circle"></i> Help Center</a>
+              <a class="dropdown-item" href="index.html"><i class="align-middle me-1 fa-solid fa-gear"></i> Settings & Privacy</a>
+              <a class="dropdown-item" href="#"><i class="align-middle me-1 fa-regular fa-circle-question"></i> Help Center</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" [routerLink]="" (click)="logout()">Log out</a>
+              <a class="dropdown-item" [routerLink]="" (click)="logout()"><i class="align-middle me-1 fa-solid fa-right-from-bracket"></i> Log out</a>
             </div>
           </li>
         </ul>
@@ -231,22 +231,22 @@
         <div class="row text-muted">
           <div class="col-6 text-start">
             <p class="mb-0">
-              <a class="text-muted" href="https://adminkit.io/" target="_blank"><strong>AdminKit</strong></a> &copy;
+              <a class="text-muted" href="https://filteredcode.co.za/" target="_blank"><strong>filteredcode</strong></a> &copy;
             </p>
           </div>
           <div class="col-6 text-end">
             <ul class="list-inline">
               <li class="list-inline-item">
-                <a class="text-muted" href="https://adminkit.io/" target="_blank">Support</a>
+                <a class="text-muted" href="https://filteredcode.co.za/" target="_blank">Support</a>
               </li>
               <li class="list-inline-item">
-                <a class="text-muted" href="https://adminkit.io/" target="_blank">Help Center</a>
+                <a class="text-muted" href="https://filteredcode.co.za/" target="_blank">Help Center</a>
               </li>
               <li class="list-inline-item">
-                <a class="text-muted" href="https://adminkit.io/" target="_blank">Privacy</a>
+                <a class="text-muted" href="https://filteredcode.co.za/" target="_blank">Privacy</a>
               </li>
               <li class="list-inline-item">
-                <a class="text-muted" href="https://adminkit.io/" target="_blank">Terms</a>
+                <a class="text-muted" href="https://filteredcode.co.za/" target="_blank">Terms</a>
               </li>
             </ul>
           </div>

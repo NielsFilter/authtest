@@ -33,7 +33,7 @@ export class AlertComponent implements OnInit, OnDestroy {
                 this.alerts.push(alert);
 
                 // auto close alert if required
-                var delay = alert.autoCloseDelay || 40000;
+                var delay = alert.autoCloseDelay || 3000;
                 setTimeout(() => this.removeAlert(alert), delay);
             });
 
@@ -64,8 +64,6 @@ export class AlertComponent implements OnInit, OnDestroy {
     getAlertStyle(alert: Alert): string{
         if (!alert) return '';
 
-        const classes = ['alert', 'toast', 'show'];
-
         const alertTypeClass = {
             [AlertType.Success]: 'text-bg-success',
             [AlertType.Error]: 'text-bg-danger',
@@ -74,10 +72,10 @@ export class AlertComponent implements OnInit, OnDestroy {
         }
 
         if (alert.type !== undefined) {
-            classes.push(alertTypeClass[alert.type]);
+            return alertTypeClass[alert.type];
         }
 
-        return classes.join(' ');
+        return alertTypeClass[AlertType.Info];
     }
 
     getIconClass(alert: Alert) : string {

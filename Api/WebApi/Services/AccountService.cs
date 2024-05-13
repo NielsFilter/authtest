@@ -145,7 +145,7 @@ public class AccountService : IAccountService
         // first registered account is an admin
         var isFirstAccount = _context.Accounts.Count() == 0;
         account.Role = isFirstAccount ? Role.Admin : Role.User;
-        account.Created = DateTime.UtcNow;
+        account.CreatedDateTime = DateTime.UtcNow;
         account.VerificationToken = generateVerificationToken();
 
         // hash password
@@ -230,7 +230,7 @@ public class AccountService : IAccountService
 
         // map model to new account object
         var account = _mapper.Map<Account>(model);
-        account.Created = DateTime.UtcNow;
+        account.CreatedDateTime = DateTime.UtcNow;
         account.Verified = DateTime.UtcNow;
 
         // hash password
