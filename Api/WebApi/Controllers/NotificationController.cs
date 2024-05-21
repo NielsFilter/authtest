@@ -1,5 +1,7 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Authorization;
+using WebApi.Entities;
 using WebApi.Models;
 using WebApi.Models.Accounts;
 using WebApi.Services;
@@ -9,19 +11,18 @@ namespace WebApi.Controllers;
 [Authorize]
 [ApiController]
 [Route("[controller]")]
-public class NotificationController : BaseController
+public class NotificationController(INotificationService notificationService) : BaseController
 {
-    private readonly INotificationService _notificationService;
-
-    public NotificationController(INotificationService notificationService)
-    {
-        _notificationService = notificationService;
-    }
-    
     [HttpGet]
-    public ActionResult<IEnumerable<NotificationResponse>> GetAll(PagedRequest request)
+    public async Task<ActionResult<IEnumerable<NewAccountAppNotification>>> GetAll([FromQuery] PagedRequest request)
     {
-        var notifications = _notificationService.GetAllAccountNotifications(new ListNotificationRequest
+        await notificationService.NewNotification(new NewNotificationRequest()
+        {
+            Message = "Hello world " + DateTime.Now.ToString(CultureInfo.InvariantCulture),
+            Type = NotificationTypes.Info
+        });
+         
+        var notifications = notificationService.GetAllAccountNotifications(new ListNotificationRequest
         {
             AccountId = Account.Id,
             Index = request.Index,
@@ -30,13 +31,14 @@ public class NotificationController : BaseController
         return Ok(notifications);
     }
     
-    [HttpGet]
-    public ActionResult<NotificationResponse> GetAll(int notificationId)
+   
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<NewAccountAppNotification>> GetById(int id)
     {
-        var notification = _notificationService.GetAccountNotification(new GetNotificationRequest
+        var notification = await notificationService.GetAccountNotification(new GetNotificationRequest
         {
             AccountId = Account.Id,
-            NotificationId = notificationId
+            NotificationId = id
         });
         if (notification == null)
         {
@@ -46,9 +48,9 @@ public class NotificationController : BaseController
     }
     
     [HttpDelete]
-    public ActionResult DeleteNotification(int notificationId)
+    public async Task<ActionResult> DeleteNotification(int notificationId)
     {
-        _notificationService.DeleteNotification(new DeleteNotificationRequest()
+        await notificationService.DeleteNotification(new DeleteNotificationRequest()
         {
             AccountId = Account.Id,
             Id = notificationId

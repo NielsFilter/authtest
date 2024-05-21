@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "M9fcWVa/pycB/sPU+gfAh72V2HYNc6+ZC68k0yX+E36P/UR4t7QGFSL7R3uZq7A/Va8TLnPbo7eYwvViL/3ADg==",
+  "success": true,
+  "projectFilePath": "D:\\Projects\\TestApps\\AuthTest\\Api\\WebApi.Domain\\WebApi.Domain.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\niels\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\8.0.4\\microsoft.entityframeworkcore.abstractions.8.0.4.nupkg.sha512"
+  ],
+  "logs": []
+}

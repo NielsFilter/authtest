@@ -1,0 +1,276 @@
+{
+  "format": 1,
+  "restore": {
+    "D:\\Projects\\TestApps\\AuthTest\\Api\\WebApi.DataAccess\\WebApi.DataAccess.csproj": {}
+  },
+  "projects": {
+    "D:\\Projects\\TestApps\\AuthTest\\Api\\WebApi.Application\\WebApi.Application.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Projects\\TestApps\\AuthTest\\Api\\WebApi.Application\\WebApi.Application.csproj",
+        "projectName": "WebApi.Application",
+        "projectPath": "D:\\Projects\\TestApps\\AuthTest\\Api\\WebApi.Application\\WebApi.Application.csproj",
+        "packagesPath": "C:\\Users\\niels\\.nuget\\packages\\",
+        "outputPath": "D:\\Projects\\TestApps\\AuthTest\\Api\\WebApi.Application\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\niels\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "D:\\Projects\\TestApps\\AuthTest\\Api\\WebApi.Domain\\WebApi.Domain.csproj": {
+                "projectPath": "D:\\Projects\\TestApps\\AuthTest\\Api\\WebApi.Domain\\WebApi.Domain.csproj"
+              },
+              "D:\\Projects\\TestApps\\AuthTest\\Api\\WebApi.Shared\\WebApi.Shared.csproj": {
+                "projectPath": "D:\\Projects\\TestApps\\AuthTest\\Api\\WebApi.Shared\\WebApi.Shared.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "AutoMapper": {
+              "target": "Package",
+              "version": "[13.0.1, )"
+            },
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.0.2, )"
+            },
+            "MailKit": {
+              "target": "Package",
+              "version": "[4.5.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.205/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\Projects\\TestApps\\AuthTest\\Api\\WebApi.DataAccess\\WebApi.DataAccess.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Projects\\TestApps\\AuthTest\\Api\\WebApi.DataAccess\\WebApi.DataAccess.csproj",
+        "projectName": "WebApi.DataAccess",
+        "projectPath": "D:\\Projects\\TestApps\\AuthTest\\Api\\WebApi.DataAccess\\WebApi.DataAccess.csproj",
+        "packagesPath": "C:\\Users\\niels\\.nuget\\packages\\",
+        "outputPath": "D:\\Projects\\TestApps\\AuthTest\\Api\\WebApi.DataAccess\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\niels\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "D:\\Projects\\TestApps\\AuthTest\\Api\\WebApi.Application\\WebApi.Application.csproj": {
+                "projectPath": "D:\\Projects\\TestApps\\AuthTest\\Api\\WebApi.Application\\WebApi.Application.csproj"
+              },
+              "D:\\Projects\\TestApps\\AuthTest\\Api\\WebApi.Domain\\WebApi.Domain.csproj": {
+                "projectPath": "D:\\Projects\\TestApps\\AuthTest\\Api\\WebApi.Domain\\WebApi.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.AspNetCore.SignalR": {
+              "target": "Package",
+              "version": "[1.1.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[8.0.4, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.205/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\Projects\\TestApps\\AuthTest\\Api\\WebApi.Domain\\WebApi.Domain.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Projects\\TestApps\\AuthTest\\Api\\WebApi.Domain\\WebApi.Domain.csproj",
+        "projectName": "WebApi.Domain",
+        "projectPath": "D:\\Projects\\TestApps\\AuthTest\\Api\\WebApi.Domain\\WebApi.Domain.csproj",
+        "packagesPath": "C:\\Users\\niels\\.nuget\\packages\\",
+        "outputPath": "D:\\Projects\\TestApps\\AuthTest\\Api\\WebApi.Domain\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\niels\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore.Abstractions": {
+              "target": "Package",
+              "version": "[8.0.4, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.205/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\Projects\\TestApps\\AuthTest\\Api\\WebApi.Shared\\WebApi.Shared.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Projects\\TestApps\\AuthTest\\Api\\WebApi.Shared\\WebApi.Shared.csproj",
+        "projectName": "WebApi.Shared",
+        "projectPath": "D:\\Projects\\TestApps\\AuthTest\\Api\\WebApi.Shared\\WebApi.Shared.csproj",
+        "packagesPath": "C:\\Users\\niels\\.nuget\\packages\\",
+        "outputPath": "D:\\Projects\\TestApps\\AuthTest\\Api\\WebApi.Shared\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\niels\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.205/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

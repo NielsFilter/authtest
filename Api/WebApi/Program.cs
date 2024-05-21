@@ -1,8 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using WebApi.Authorization;
+using WebApi.Data.Profile;
 using WebApi.Helpers;
 using WebApi.Services;
+using WebApi.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,15 +24,36 @@ var builder = WebApplication.CreateBuilder(args);
         x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
     services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-    services.AddSwaggerGen();
+
+    services.AddSwaggerGen(c =>
+    {
+        // We'll use the method name as the operation id
+        c.CustomOperationIds(apiDesc =>
+        {
+            if (apiDesc.TryGetMethodInfo(out var methodInfo))
+            {
+                return methodInfo.DeclaringType?.Name != null ? $"{methodInfo.DeclaringType.Name.Replace("Controller", "")}{methodInfo.Name}" : methodInfo.Name;
+            }
+
+            return null;
+        });
+    });
 
     // configure strongly typed settings object
     services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
+    services.AddSignalR();
+    services.AddHttpContextAccessor();
+    
     // configure DI for application services
-    services.AddScoped<IJwtUtils, JwtUtils>();
+    services.AddScoped<ITokenAuthService, TokenAuthService>();
     services.AddScoped<IAccountService, AccountService>();
+    services.AddScoped<IAccountRepository, AccountRepository>();
+    services.AddScoped<INotificationRepository, NotificationRepository>();
+    services.AddScoped<INotificationService, NotificationService>();
     services.AddScoped<IEmailService, EmailService>();
+    services.AddScoped<IAppNotifier, SignalrAppNotifier>();
+    services.AddSingleton<ILoggedInUserResolver, LoggedInUserResolver>();
 }
 
 var app = builder.Build();
@@ -42,8 +68,11 @@ using (var scope = app.Services.CreateScope())
 // configure HTTP request pipeline
 {
     // generated swagger json and swagger ui middleware
-    app.UseSwagger();
-    app.UseSwaggerUI(x => x.SwaggerEndpoint("/swagger/v1/swagger.json", ".NET Sign-up and Verification API"));
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
 
     // global cors policy
     app.UseCors(x => x
@@ -57,7 +86,8 @@ using (var scope = app.Services.CreateScope())
 
     // custom jwt auth middleware
     app.UseMiddleware<JwtMiddleware>();
-
+    
+    app.MapHub<SignalrAppNotificationHub>("/Notify");
     app.MapControllers();
 }
 

@@ -1,0 +1,13 @@
+D:\Projects\TestApps\AuthTest\Api\WebApi.Domain\bin\Debug\net8.0\WebApi.Domain.deps.json
+D:\Projects\TestApps\AuthTest\Api\WebApi.Domain\bin\Debug\net8.0\WebApi.Domain.dll
+D:\Projects\TestApps\AuthTest\Api\WebApi.Domain\bin\Debug\net8.0\WebApi.Domain.pdb
+D:\Projects\TestApps\AuthTest\Api\WebApi.Domain\obj\Debug\net8.0\WebApi.Domain.csproj.AssemblyReference.cache
+D:\Projects\TestApps\AuthTest\Api\WebApi.Domain\obj\Debug\net8.0\WebApi.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\Projects\TestApps\AuthTest\Api\WebApi.Domain\obj\Debug\net8.0\WebApi.Domain.AssemblyInfoInputs.cache
+D:\Projects\TestApps\AuthTest\Api\WebApi.Domain\obj\Debug\net8.0\WebApi.Domain.AssemblyInfo.cs
+D:\Projects\TestApps\AuthTest\Api\WebApi.Domain\obj\Debug\net8.0\WebApi.Domain.csproj.CoreCompileInputs.cache
+D:\Projects\TestApps\AuthTest\Api\WebApi.Domain\obj\Debug\net8.0\WebApi.Domain.sourcelink.json
+D:\Projects\TestApps\AuthTest\Api\WebApi.Domain\obj\Debug\net8.0\WebApi.Domain.dll
+D:\Projects\TestApps\AuthTest\Api\WebApi.Domain\obj\Debug\net8.0\refint\WebApi.Domain.dll
+D:\Projects\TestApps\AuthTest\Api\WebApi.Domain\obj\Debug\net8.0\WebApi.Domain.pdb
+D:\Projects\TestApps\AuthTest\Api\WebApi.Domain\obj\Debug\net8.0\ref\WebApi.Domain.dll

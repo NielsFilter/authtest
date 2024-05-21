@@ -2,6 +2,7 @@
 
 import { AccountService } from './_services';
 import { Account, Role } from './_models';
+import { SignalrService } from './_services/signalr.service';
 
 @Component({ selector: 'app-root', templateUrl: 'app.component.html' })
 export class AppComponent implements AfterViewInit {
@@ -10,9 +11,10 @@ export class AppComponent implements AfterViewInit {
     sideCollapsed: Boolean = false;
     innerWidth: number;
 
-    constructor(private accountService: AccountService) {
+    constructor(private accountService: AccountService, private signalrService: SignalrService) {
         this.accountService.account.subscribe(x => this.account = x);
         this.innerWidth = 0;
+        this.signalrService.startConnection();
     }
     ngAfterViewInit(): void {
         this.innerWidth = window.innerWidth;

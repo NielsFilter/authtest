@@ -1,3 +1,5 @@
+using WebApi.Shared;
+
 namespace WebApi.Authorization;
 
 using Microsoft.Extensions.Options;
@@ -14,7 +16,7 @@ public class JwtMiddleware
         _appSettings = appSettings.Value;
     }
 
-    public async Task Invoke(HttpContext context, DataContext dataContext, IJwtUtils jwtUtils)
+    public async Task Invoke(HttpContext context, DataContext dataContext, ITokenAuthService jwtUtils)
     {
         var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
         var accountId = jwtUtils.ValidateJwtToken(token);

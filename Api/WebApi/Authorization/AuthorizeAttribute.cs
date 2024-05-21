@@ -1,3 +1,6 @@
+using WebApi.Data.Profile;
+using WebApi.Helpers;
+
 namespace WebApi.Authorization;
 
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +25,7 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
             return;
 
         // authorization
-        var account = (Account)context.HttpContext.Items["Account"];
+        var account = context.HttpContext.Items["Account"] as Account;
         if (account == null || (_roles.Any() && !_roles.Contains(account.Role)))
         {
             // not logged in or role not authorized

@@ -9,13 +9,16 @@ import { AccountService } from './_services';
 import { AppComponent } from './app.component';
 import { AlertComponent } from './_components';
 import { HomeComponent } from './home';
+import { ServiceClientModule } from 'src/shared/service-clients/service-client.module';
+import { environment } from '@environments/environment';
 
 @NgModule({
     imports: [
         BrowserModule,
         ReactiveFormsModule,
         HttpClientModule,
-        AppRoutingModule
+        AppRoutingModule,
+        ServiceClientModule
     ],
     declarations: [
         AppComponent,
