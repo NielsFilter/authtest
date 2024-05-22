@@ -5,7 +5,9 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using WebApi.Authorization;
 using WebApi.Data.Profile;
+using WebApi.Domain;
 using WebApi.Helpers;
+using WebApi.Infrastructure;
 using WebApi.Services;
 using WebApi.Shared;
 
@@ -53,6 +55,7 @@ var builder = WebApplication.CreateBuilder(args);
     services.AddScoped<INotificationService, NotificationService>();
     services.AddScoped<IEmailService, EmailService>();
     services.AddScoped<IAppNotifier, SignalrAppNotifier>();
+    services.AddScoped<IUnitOfWork, UnitOfWork>();
     services.AddSingleton<ILoggedInUserResolver, LoggedInUserResolver>();
 }
 

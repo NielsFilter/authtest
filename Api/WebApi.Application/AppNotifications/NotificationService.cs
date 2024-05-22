@@ -1,4 +1,5 @@
 using AutoMapper;
+using WebApi.Domain;
 using WebApi.Entities;
 using WebApi.Helpers;
 using WebApi.Models.Accounts;
@@ -15,36 +16,38 @@ public interface INotificationService
 }
 
 public class NotificationService(
-    INotificationRepository notificationRepository,
+    IUnitOfWork unitOfWork,
     IAppNotifier appNotifier,
     IMapper mapper) : INotificationService
 {
     public async Task<IList<NewAccountAppNotification>> GetAllAccountNotifications(ListNotificationRequest request)
     {
         var input = mapper.Map<FilterAccountNotificationsDto>(request);
-        var notifications = await notificationRepository.GetAllByFilterPaged(input);
+        var notifications = await unitOfWork.NotificationRepository.GetAllByFilterPaged(input);
         return mapper.Map<IList<NewAccountAppNotification>>(notifications);
     }
 
     public async Task<NewAccountAppNotification> GetAccountNotification(GetNotificationRequest request)
     {
-        var notification = await notificationRepository.GetById(request.NotificationId);
+        var notification = await unitOfWork.NotificationRepository.GetById(request.NotificationId);
         return mapper.Map<NewAccountAppNotification>(notification);
     }
 
     public async Task DeleteNotification(DeleteNotificationRequest req)
     {
-        var notification = await notificationRepository.GetById(req.Id);
+        var notification = await unitOfWork.NotificationRepository.GetById(req.Id);
         if (notification == null) throw new AppException("Notification not found");
         if(notification.TargetAccountId != req.AccountId) throw new AppException("You don't have permission to delete this notification");
         
-        await notificationRepository.Delete(req.Id);
+        await unitOfWork.NotificationRepository.Delete(req.Id);
+        await unitOfWork.Commit();
     }
 
     public async Task NewNotification(NewNotificationRequest newNotification)
     {
          var notification = mapper.Map<Notification>(newNotification);
-         await notificationRepository.Insert(notification);
+         await unitOfWork.NotificationRepository.Insert(notification);
+         await unitOfWork.Commit();
          
          await appNotifier.NewAccountNotification(mapper.Map<NewAccountAppNotification>(notification));
     }

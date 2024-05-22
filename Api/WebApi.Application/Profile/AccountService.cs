@@ -1,19 +1,15 @@
-using WebApi.Shared;
-
 namespace WebApi.Services;
 
+using Domain;
+using Shared;
 using AutoMapper;
 using BCrypt.Net;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text;
-using WebApi.Authorization;
-using WebApi.Entities;
-using WebApi.Helpers;
-using WebApi.Models.Accounts;
+using Authorization;
+using Entities;
+using Helpers;
+using Models.Accounts;
 
 public interface IAccountService
 {
@@ -32,45 +28,33 @@ public interface IAccountService
     Task Delete(int id);
 }
 
-public class AccountService : IAccountService
+public class AccountService(
+    IUnitOfWork unitOfWork,
+    ITokenAuthService tokenAuthService,
+    IMapper mapper,
+    IOptions<AppSettings> appSettings,
+    IEmailService emailService)
+    : IAccountService
 {
-    private readonly IAccountRepository _accountRepository;
-    private readonly ITokenAuthService _tokenAuthService;
-    private readonly IMapper _mapper;
-    private readonly AppSettings _appSettings;
-    private readonly IEmailService _emailService;
-
-    public AccountService(
-        IAccountRepository accountRepository,
-        ITokenAuthService tokenAuthService,
-        IMapper mapper,
-        IOptions<AppSettings> appSettings,
-        IEmailService emailService)
-    {
-        _accountRepository = accountRepository;
-        _tokenAuthService = tokenAuthService;
-        _mapper = mapper;
-        _appSettings = appSettings.Value;
-        _emailService = emailService;
-    }
+    private readonly AppSettings _appSettings = appSettings.Value;
 
     public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest model, string ipAddress)
     {
-        var account = await _accountRepository.GetByEmail(model.Email);
+        var account = await unitOfWork.AccountRepository.GetByEmail(model.Email);
 
         // validate
         if (account == null || !account.IsVerified || !BCrypt.Verify(model.Password, account.PasswordHash))
             throw new AppException("Email or password is incorrect");
 
         // authentication successful so generate jwt and refresh tokens
-        var jwtToken = _tokenAuthService.GenerateJwtToken(account);
-        var refreshToken = await _tokenAuthService.GenerateRefreshToken(ipAddress);
-        await _accountRepository.AddNewRefreshToken(account.Id, refreshToken);
+        var jwtToken = tokenAuthService.GenerateJwtToken(account);
+        var refreshToken = await tokenAuthService.GenerateRefreshToken(ipAddress);
+        await  unitOfWork.AccountRepository.AddNewRefreshToken(account.Id, refreshToken);
         
         // remove old refresh tokens from account
-        await _accountRepository.RemoveRefreshTokensOlderThanTtl(account.Id, _appSettings.RefreshTokenTTL);
+        await  unitOfWork.AccountRepository.RemoveRefreshTokensOlderThanTtl(account.Id, _appSettings.RefreshTokenTTL);
         
-        var response = _mapper.Map<AuthenticateResponse>(account);
+        var response = mapper.Map<AuthenticateResponse>(account);
         response.JwtToken = jwtToken;
         response.RefreshToken = refreshToken.Token;
         return response;
@@ -83,25 +67,25 @@ public class AccountService : IAccountService
 
         if (refreshToken.IsRevoked)
         {
-            await _accountRepository.RevokeToken(account.Id, refreshToken.Token, ipAddress, $"Attempted reuse of revoked ancestor token: {token}");
+            await  unitOfWork.AccountRepository.RevokeToken(account.Id, refreshToken.Token, ipAddress, $"Attempted reuse of revoked ancestor token: {token}");
         }
 
         if (!refreshToken.IsActive)
             throw new AppException("Invalid token");
 
         // replace old refresh token with a new one (rotate token)
-        var newRefreshToken = await _tokenAuthService.GenerateRefreshToken(ipAddress);
-        await _accountRepository.RevokeToken(account.Id, token, ipAddress, "Replaced by new token");
-        await _accountRepository.AddNewRefreshToken(account.Id, newRefreshToken);
+        var newRefreshToken = await tokenAuthService.GenerateRefreshToken(ipAddress);
+        await  unitOfWork.AccountRepository.RevokeToken(account.Id, token, ipAddress, "Replaced by new token");
+        await  unitOfWork.AccountRepository.AddNewRefreshToken(account.Id, newRefreshToken);
 
         // remove old refresh tokens from account
-        await _accountRepository.RemoveRefreshTokensOlderThanTtl(account.Id, _appSettings.RefreshTokenTTL);
+        await  unitOfWork.AccountRepository.RemoveRefreshTokensOlderThanTtl(account.Id, _appSettings.RefreshTokenTTL);
         
         // generate new jwt
-        var jwtToken = _tokenAuthService.GenerateJwtToken(account);
+        var jwtToken = tokenAuthService.GenerateJwtToken(account);
 
         // return data in authenticate response object
-        var response = _mapper.Map<AuthenticateResponse>(account);
+        var response = mapper.Map<AuthenticateResponse>(account);
         response.JwtToken = jwtToken;
         response.RefreshToken = newRefreshToken.Token;
         return response;
@@ -116,25 +100,25 @@ public class AccountService : IAccountService
             throw new AppException("Invalid token");
 
         // revoke token and save
-        await _accountRepository.RevokeToken(account.Id, token, ipAddress, "Revoked without replacement");
+        await  unitOfWork.AccountRepository.RevokeToken(account.Id, token, ipAddress, "Revoked without replacement");
     }
 
     public async Task Register(RegisterRequest model, string origin)
     {
         // validate
-        var existingAccount = await _accountRepository.GetByEmail(model.Email);
+        var existingAccount = await  unitOfWork.AccountRepository.GetByEmail(model.Email);
         if(existingAccount != null)
         {
             // send already registered error in email to prevent account enumeration
-            sendAlreadyRegisteredEmail(model.Email, origin);
+            SendAlreadyRegisteredEmail(model.Email, origin);
             return;
         }
 
         // map model to new account object
-        var account = _mapper.Map<Account>(model);
+        var account = mapper.Map<Account>(model);
 
         // first registered account is an admin - TODO: THIS SHOULD LATER BE REPLACED...
-        var isFirstAccount = !await _accountRepository.HasAny();
+        var isFirstAccount = !await  unitOfWork.AccountRepository.HasAny();
         account.Role = isFirstAccount ? Role.Admin : Role.User;
         account.CreatedDateTime = DateTime.UtcNow;
         account.VerificationToken = await GenerateVerificationToken();
@@ -143,15 +127,15 @@ public class AccountService : IAccountService
         account.PasswordHash = BCrypt.HashPassword(model.Password);
 
         // save account
-        await _accountRepository.Insert(account);
+        await  unitOfWork.AccountRepository.Insert(account);
 
         // send email
-        sendVerificationEmail(account, origin);
+        SendVerificationEmail(account, origin);
     }
 
     public async Task VerifyEmail(string token)
     {
-        var account = await _accountRepository.GetByVerificationToken(token);
+        var account = await unitOfWork.AccountRepository.GetByVerificationToken(token);
 
         if (account == null) 
             throw new AppException("Verification failed");
@@ -159,12 +143,12 @@ public class AccountService : IAccountService
         account.Verified = DateTime.UtcNow;
         account.VerificationToken = null;
 
-        await _accountRepository.Update(account);
+        unitOfWork.AccountRepository.Update(account);
     }
 
     public async Task ForgotPassword(ForgotPasswordRequest model, string origin)
     {
-        var account = await _accountRepository.GetByEmail(model.Email);
+        var account = await  unitOfWork.AccountRepository.GetByEmail(model.Email);
 
         // always return ok response to prevent email enumeration
         if (account == null) return;
@@ -173,10 +157,10 @@ public class AccountService : IAccountService
         account.ResetToken = await GenerateResetToken();
         account.ResetTokenExpires = DateTime.UtcNow.AddDays(1);
 
-        await _accountRepository.Update(account);
+        unitOfWork.AccountRepository.Update(account);
 
         // send email
-        sendPasswordResetEmail(account, origin);
+        SendPasswordResetEmail(account, origin);
     }
 
     public async Task ValidateResetToken(ValidateResetTokenRequest model)
@@ -194,7 +178,7 @@ public class AccountService : IAccountService
         account.ResetToken = null;
         account.ResetTokenExpires = null;
 
-        await _accountRepository.Update(account);
+        unitOfWork.AccountRepository.Update(account);
     }
 
     public Task<IEnumerable<AccountResponse>> GetAll()
@@ -205,20 +189,20 @@ public class AccountService : IAccountService
     public async Task<AccountResponse> GetById(int id)
     {
         var account = await GetAccountOrThrow(id);
-        return _mapper.Map<AccountResponse>(account);
+        return mapper.Map<AccountResponse>(account);
     }
 
     public async Task<AccountResponse> Create(CreateRequest model)
     {
         // validate
-        var existingAccount = await _accountRepository.GetByEmail(model.Email);
+        var existingAccount = await  unitOfWork.AccountRepository.GetByEmail(model.Email);
         if (existingAccount != null)
         {
             throw new AppException($"Email '{model.Email}' is already registered");
         }
 
         // map model to new account object
-        var account = _mapper.Map<Account>(model);
+        var account = mapper.Map<Account>(model);
         account.CreatedDateTime = DateTime.UtcNow;
         account.Verified = DateTime.UtcNow;
 
@@ -226,9 +210,9 @@ public class AccountService : IAccountService
         account.PasswordHash = BCrypt.HashPassword(model.Password);
 
         // save account
-        await _accountRepository.Update(account);
+        unitOfWork.AccountRepository.Update(account);
         
-        return _mapper.Map<AccountResponse>(account);
+        return mapper.Map<AccountResponse>(account);
     }
 
     public async Task<AccountResponse> Update(int id, UpdateRequest model)
@@ -238,7 +222,7 @@ public class AccountService : IAccountService
         // validate
         if (account.Email != model.Email)
         {
-            var existing = await _accountRepository.GetByEmail(model.Email);
+            var existing = await  unitOfWork.AccountRepository.GetByEmail(model.Email);
             if (existing != null)
             {
                 throw new AppException($"Email '{model.Email}' is already registered");
@@ -251,38 +235,38 @@ public class AccountService : IAccountService
             account.PasswordHash = BCrypt.HashPassword(model.Password);
 
         // copy model to account and save
-        _mapper.Map(model, account);
+        mapper.Map(model, account);
         account.Updated = DateTime.UtcNow;
 
-        await _accountRepository.Update(account);
+        unitOfWork.AccountRepository.Update(account);
         
-        return _mapper.Map<AccountResponse>(account);
+        return mapper.Map<AccountResponse>(account);
     }
 
     public async Task Delete(int id)
     {
-        await _accountRepository.Delete(id);
+        await  unitOfWork.AccountRepository.Delete(id);
     }
 
     // helper methods
 
     private async Task<Account> GetAccountOrThrow(int id)
     {
-        var account = await _accountRepository.GetById(id);
+        var account = await  unitOfWork.AccountRepository.GetById(id);
         if (account == null) throw new KeyNotFoundException("Account not found");
         return account;
     }
 
     private async Task<Account> GetAccountByRefreshToken(string token)
     {
-        var account =  await _accountRepository.GetByRefreshToken(token);
+        var account =  await  unitOfWork.AccountRepository.GetByRefreshToken(token);
         if (account == null) throw new AppException("Invalid token");
         return account;
     }
 
     private async Task<Account> GetAccountByValidResetToken(string token)
     {
-        var account = await _accountRepository.GetByResetToken(token);
+        var account = await  unitOfWork.AccountRepository.GetByResetToken(token);
         if (account == null || account.ResetTokenExpires > DateTime.UtcNow)
         {
             throw new AppException("Invalid token");
@@ -297,7 +281,7 @@ public class AccountService : IAccountService
         var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
 
         // ensure token is unique by checking against db
-        var accountByResetToken = await _accountRepository.GetByResetToken(token);
+        var accountByResetToken = await  unitOfWork.AccountRepository.GetByResetToken(token);
         if (accountByResetToken != null)
             return await GenerateResetToken();
         
@@ -310,7 +294,7 @@ public class AccountService : IAccountService
         var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
 
         // ensure token is unique by checking against db
-        var accountByToken = await _accountRepository.GetByVerificationToken(token);
+        var accountByToken = await  unitOfWork.AccountRepository.GetByVerificationToken(token);
         var tokenIsUnique = accountByToken == null;
         if (!tokenIsUnique)
         {
@@ -320,7 +304,7 @@ public class AccountService : IAccountService
         return token;
     }
     
-    private void sendVerificationEmail(Account account, string origin)
+    private void SendVerificationEmail(Account account, string origin)
     {
         string message;
         if (!string.IsNullOrEmpty(origin))
@@ -339,7 +323,7 @@ public class AccountService : IAccountService
                             <p><code>{account.VerificationToken}</code></p>";
         }
 
-        _emailService.Send(
+        emailService.Send(
             to: account.Email,
             subject: "Sign-up Verification API - Verify Email",
             html: $@"<h4>Verify Email</h4>
@@ -348,7 +332,7 @@ public class AccountService : IAccountService
         );
     }
 
-    private void sendAlreadyRegisteredEmail(string email, string origin)
+    private void SendAlreadyRegisteredEmail(string email, string origin)
     {
         string message;
         if (!string.IsNullOrEmpty(origin))
@@ -356,7 +340,7 @@ public class AccountService : IAccountService
         else
             message = "<p>If you don't know your password you can reset it via the <code>/accounts/forgot-password</code> api route.</p>";
 
-        _emailService.Send(
+        emailService.Send(
             to: email,
             subject: "Sign-up Verification API - Email Already Registered",
             html: $@"<h4>Email Already Registered</h4>
@@ -365,7 +349,7 @@ public class AccountService : IAccountService
         );
     }
 
-    private void sendPasswordResetEmail(Account account, string origin)
+    private void SendPasswordResetEmail(Account account, string origin)
     {
         string message;
         if (!string.IsNullOrEmpty(origin))
@@ -380,7 +364,7 @@ public class AccountService : IAccountService
                             <p><code>{account.ResetToken}</code></p>";
         }
 
-        _emailService.Send(
+        emailService.Send(
             to: account.Email,
             subject: "Sign-up Verification API - Reset Password",
             html: $@"<h4>Reset Password Email</h4>

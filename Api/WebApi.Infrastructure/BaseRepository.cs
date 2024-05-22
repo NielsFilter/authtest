@@ -25,12 +25,15 @@ public class BaseRepository<T>(DataContext context) : IRepository<T>
     public async Task Insert(T entity)
     {
         await context.Set<T>().AddAsync(entity);
-        await context.SaveChangesAsync();
     }
 
-    public async Task Update(T entity)
+    public void Update(T entity)
     {
-        context.Set<T>().Update(entity);
+        context.Entry(entity).State = EntityState.Modified;
+    }
+    
+    public async Task SaveChanges()
+    {
         await context.SaveChangesAsync();
     }
 
@@ -40,7 +43,6 @@ public class BaseRepository<T>(DataContext context) : IRepository<T>
         if (entity != null)
         {
             context.Set<T>().Remove(entity);
-            await context.SaveChangesAsync();
             return;
         }
         
@@ -48,5 +50,10 @@ public class BaseRepository<T>(DataContext context) : IRepository<T>
         {
             throw new AppException($"Entity {typeof(T).Name} with id {id} not found"); //todo: validation error?
         }
+    }
+
+    public void Dispose()
+    {
+        context.Dispose();
     }
 }
