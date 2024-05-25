@@ -49,7 +49,7 @@ public class AccountService(
         // authentication successful so generate jwt and refresh tokens
         var jwtToken = tokenAuthService.GenerateJwtToken(account);
         var refreshToken = await tokenAuthService.GenerateRefreshToken(ipAddress);
-        await  unitOfWork.AccountRepository.AddNewRefreshToken(account.Id, refreshToken);
+        await unitOfWork.AccountRepository.AddNewRefreshToken(account.Id, refreshToken);
         
         // remove old refresh tokens from account
         await  unitOfWork.AccountRepository.RemoveRefreshTokensOlderThanTtl(account.Id, _appSettings.RefreshTokenTTL);
