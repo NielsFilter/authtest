@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WebApi.Data.Profile;
@@ -29,8 +30,40 @@ public class DataContext : DbContext
     {
         // connect to sqlite database
         options
-            .UseSqlServer(Configuration.GetConnectionString("Default"), x => x.MigrationsAssembly("WebApi.Infrastructure"))
-            .AddInterceptors(new CreateAuditInterceptor(_loggedInUserResolver));
+            .UseSqlServer(Configuration.GetConnectionString("Default"),
+                x => x.MigrationsAssembly("WebApi.Infrastructure"));
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+    {
+        foreach (var entity in ChangeTracker.Entries())
+        {
+            var loggedInAccount = _loggedInUserResolver.GetLoggedInAccount();
+            if (loggedInAccount is null)
+            {
+                break;
+            }
+
+            switch (entity)
+            {
+                case { Entity: ICreateAudit createAudit, State: EntityState.Added }:
+                    createAudit.CreatedById = loggedInAccount.Id;
+                    createAudit.CreatedTimestamp = DateTime.UtcNow;
+                    break;
+                case { Entity: IUpdateAudit updateAudit, State: EntityState.Modified }:
+                    updateAudit.UpdatedById = loggedInAccount.Id;
+                    updateAudit.UpdatedTimestamp = DateTime.UtcNow;
+                    break;
+                case { Entity: IDeleteAudit deleteAudit, State: EntityState.Deleted }:
+                    entity.State = EntityState.Modified;
+                    deleteAudit.IsDeleted = true;
+                    deleteAudit.DeletedById = loggedInAccount.Id;
+                    deleteAudit.DeletedTimestamp = DateTime.UtcNow;
+                    break;
+            }
+        }
+        
+        return base.SaveChangesAsync(cancellationToken);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

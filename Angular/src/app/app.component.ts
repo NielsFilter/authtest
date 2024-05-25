@@ -14,7 +14,14 @@ export class AppComponent implements AfterViewInit {
     constructor(private accountService: AccountService, private signalrService: SignalrService) {
         this.accountService.account.subscribe(x => this.account = x);
         this.innerWidth = 0;
-        this.signalrService.startConnection();
+
+            console.log('starting connection');
+        this.signalrService.startConnection().subscribe(() => {
+            this.signalrService.receiveMessage().subscribe((message) => {
+              console.log('got a message: ');
+              console.log(message);
+            });
+          });
     }
     ngAfterViewInit(): void {
         this.innerWidth = window.innerWidth;

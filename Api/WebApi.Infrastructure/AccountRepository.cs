@@ -41,17 +41,23 @@ public class AccountRepository(DataContext context)
 
     public Task<Account?> GetByRefreshToken(string token)
     {
-        return _dbContext.Accounts.FirstOrDefaultAsync(x => x.RefreshTokens.Any(t => t.Token == token));
+        return _dbContext.Accounts
+            .Include(x=>x.RefreshTokens)
+            .FirstOrDefaultAsync(x => x.RefreshTokens.Any(t => t.Token == token));
     }
     
     public Task<Account?> GetByResetToken(string token)
     {
-        return _dbContext.Accounts.FirstOrDefaultAsync(x => x.ResetToken == token);
+        return _dbContext.Accounts
+            .Include(x=>x.RefreshTokens)
+            .FirstOrDefaultAsync(x => x.ResetToken == token);
     }
 
     public Task<Account?> GetByVerificationToken(string token)
     {
-        return _dbContext.Accounts.FirstOrDefaultAsync(x => x.VerificationToken == token);
+        return _dbContext.Accounts
+            .Include(x=>x.RefreshTokens)
+            .FirstOrDefaultAsync(x => x.VerificationToken == token);
     }
 
     public async Task RevokeToken(int accountId, string token, string ipAddress, string revokeReason)

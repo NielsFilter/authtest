@@ -12876,7 +12876,7 @@ a.list-group-item {
 
 body {
   opacity: 1 !important;
-  overflow-y: scroll
+  overflow-y: hidden;
 }
 
 @media (-ms-high-contrast: none), screen and (-ms-high-contrast: active) {

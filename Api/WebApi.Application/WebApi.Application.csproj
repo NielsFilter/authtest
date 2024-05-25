@@ -18,5 +18,11 @@
       <ProjectReference Include="..\WebApi.Domain\WebApi.Domain.csproj" />
       <ProjectReference Include="..\WebApi.Shared\WebApi.Shared.csproj" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <Reference Include="Microsoft.AspNetCore.SignalR.Core">
+        <HintPath>C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.5\Microsoft.AspNetCore.SignalR.Core.dll</HintPath>
+      </Reference>
+    </ItemGroup>
 
 </Project>

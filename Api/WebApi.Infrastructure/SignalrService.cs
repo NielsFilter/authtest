@@ -9,7 +9,7 @@ public class SignalrAppNotifier(IHubContext<SignalrAppNotificationHub, IAppNotif
 {
     public async Task NewAccountNotification( NewAccountAppNotification newAccountAppNotification)
     {
-        var client = hubContext.Clients.Client(newAccountAppNotification.TargetAccountId.ToString());
+        var client = hubContext.Clients.User(newAccountAppNotification.TargetAccountId.ToString());
         await client.NewAccountNotification(newAccountAppNotification);  
     }
 }

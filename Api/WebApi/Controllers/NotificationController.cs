@@ -19,10 +19,11 @@ public class NotificationController(INotificationService notificationService) : 
         await notificationService.NewNotification(new NewNotificationRequest()
         {
             Message = "Hello world " + DateTime.Now.ToString(CultureInfo.InvariantCulture),
-            Type = NotificationTypes.Info
+            Type = NotificationTypes.Info,
+            TargetAccountId = this.Account.Id
         });
          
-        var notifications = notificationService.GetAllAccountNotifications(new ListNotificationRequest
+        var notifications = await notificationService.GetAllAccountNotifications(new ListNotificationRequest
         {
             AccountId = Account.Id,
             Index = request.Index,

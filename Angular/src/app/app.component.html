@@ -71,7 +71,7 @@
     </div>
   </nav>
 
-  <div class="main">
+  <div class="main d-flex flex-column">
     <nav class="navbar navbar-expand navbar-light navbar-bg" *ngIf="account">
       <div class="sidebar-toggle js-sidebar-toggle" (click)="toggleSidebar()">
         <i class="hamburger align-self-center"></i>
@@ -211,19 +211,17 @@
 
     </nav>
 
-    <main class="content">
-      <div class="container-fluid p-0">
+    <main class="content-fluid flex-grow-1">
 
         <!-- subnav router outlet -->
         <router-outlet name="subnav"></router-outlet>
-
+      
         <!-- main router outlet -->
         <router-outlet></router-outlet>
 
         <!-- global alert -->
         <alert></alert>
 
-      </div>
     </main>
 
     <footer class="footer">

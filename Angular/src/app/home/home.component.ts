@@ -10,11 +10,10 @@ export class HomeComponent {
     constructor(private accountService: AccountService, private notificationClient: NotificationClient) { }
 
     sendNotification() {
-        console.log('sending....');
         const request = new PagedRequest();
         request.index = 0;
         request.pageSize = 10;
 
-        this.notificationClient.notificationGetAll(request).subscribe(x => console.log(x));
+        this.notificationClient.notificationGetAll(request).subscribe(x => { console.log(x);});
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using WebApi.Authorization;
@@ -56,7 +57,9 @@ var builder = WebApplication.CreateBuilder(args);
     services.AddScoped<IEmailService, EmailService>();
     services.AddScoped<IAppNotifier, SignalrAppNotifier>();
     services.AddScoped<IUnitOfWork, UnitOfWork>();
+    services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
     services.AddSingleton<ILoggedInUserResolver, LoggedInUserResolver>();
+    
 }
 
 var app = builder.Build();
