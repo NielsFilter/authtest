@@ -1,3 +1,4 @@
+using Microsoft.Identity.Client;
 using WebApi.Data.Profile;
 using WebApi.Helpers;
 
@@ -12,9 +13,9 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
 {
     private readonly IList<Role> _roles;
 
-    public AuthorizeAttribute(params Role[] roles)
+    public AuthorizeAttribute(params Role[]? roles)
     {
-        _roles = roles ?? new Role[] { };
+        _roles = roles ?? [];
     }
 
     public void OnAuthorization(AuthorizationFilterContext context)
@@ -27,10 +28,24 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
         }
 
         // authorization
-        var account = context.HttpContext.Items["Account"] as Account;
-        if (account == null || (_roles.Any() && !_roles.Contains(account.Role)))
+        var accountId = context.HttpContext.Items["AccountId"] as int?;
+        if (accountId is <= 0)
         {
-            // not logged in or role not authorized
+            // not logged in
+            context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };   
+        }
+
+        if (!_roles.Any())
+        {
+            // no roles required for this action. User is authorized, let them in...
+            return;
+        }
+        
+        // This action requires a specific role. First check if the account has that role
+        var accountRoles = context.HttpContext.Items["AccountRoles"] as List<Role>;
+        if (accountRoles == null || !_roles.Any(r => accountRoles.Any(ar => ar == r)))
+        {
+            // user does not have the required role
             context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
         }
     }

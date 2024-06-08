@@ -78,10 +78,8 @@ var builder = WebApplication.CreateBuilder(args);
     services.AddScoped<INotificationService, NotificationService>();
     services.AddScoped<IEmailService, EmailService>();
     services.AddScoped<IAppNotifier, SignalrAppNotifier>();
-    services.AddScoped<IUnitOfWork, UnitOfWork>();
-    services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
+    services.AddScoped<IRepositoryFactory, RepositoryFactory>();
     services.AddSingleton<ILoggedInUserResolver, LoggedInUserResolver>();
-    
 }
 
 var app = builder.Build();

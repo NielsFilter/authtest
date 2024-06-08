@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WebApi.Data.Profile;
+using WebApi.Domain.Profile;
 using WebApi.Infrastructure;
 
 namespace WebApi.Helpers;
@@ -12,6 +13,7 @@ using WebApi.Entities;
 public class DataContext : DbContext
 {
     public DbSet<Account> Accounts { get; set; }
+    public DbSet<AccountRole> AccountRoles { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<Notification> Notifications { get; set; }
 

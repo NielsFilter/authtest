@@ -7,19 +7,14 @@ public class UpdateRequest
 {
     private string? _password;
     private string? _confirmPassword;
-    private string? _role;
+    private List<string> _roles;
     private string? _email;
     
     public string Title { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
 
-    [EnumDataType(typeof(Role))]
-    public string? Role
-    {
-        get => _role;
-        set => _role = ReplaceEmptyWithNull(value);
-    }
+    public List<Role> Roles { get; set; }
 
     [EmailAddress]
     public string? Email

@@ -1,6 +1,6 @@
 namespace WebApi.Models.Accounts;
 
-public class AccountResponse
+public class AccountDto
 {
     public int Id { get; set; }
     public string Title { get; set; }
@@ -11,4 +11,5 @@ public class AccountResponse
     public DateTime Created { get; set; }
     public DateTime? Updated { get; set; }
     public bool IsVerified { get; set; }
+    public List<RefreshTokenDto> RefreshTokens { get; set; } = new();
 }

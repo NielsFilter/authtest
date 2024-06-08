@@ -1,3 +1,4 @@
+using WebApi.Domain.Profile;
 using WebApi.Entities;
 
 namespace WebApi.Services;
@@ -11,4 +12,6 @@ public interface IAccountRepository : IRepository<Account>
     Task<Account?> GetByResetToken(string token);
     Task<Account?> GetByVerificationToken(string token);
     Task RevokeToken(int accountId, string token, string ipAddress, string revokeReason);
+    Task SetRoles(int accountId, List<Role> roles);
+    Task<List<Role>> GetAccountRoles(int accountId);
 }

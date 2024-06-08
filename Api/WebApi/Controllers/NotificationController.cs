@@ -20,12 +20,12 @@ public class NotificationController(INotificationService notificationService) : 
         {
             Message = "Hello world " + DateTime.Now.ToString(CultureInfo.InvariantCulture),
             Type = NotificationTypes.Info,
-            TargetAccountId = this.Account.Id
+            TargetAccountId = AccountId!.Value
         });
          
         var notifications = await notificationService.GetAllAccountNotifications(new ListNotificationRequest
         {
-            AccountId = Account.Id,
+            AccountId = AccountId!.Value,
             Index = request.Index,
             PageSize = request.PageSize
         });
@@ -38,13 +38,15 @@ public class NotificationController(INotificationService notificationService) : 
     {
         var notification = await notificationService.GetAccountNotification(new GetNotificationRequest
         {
-            AccountId = Account.Id,
+            AccountId = AccountId!.Value,
             NotificationId = id
         });
+        
         if (notification == null)
         {
-            return NotFound();
+            return NotFound(id);
         }
+        
         return Ok(notification);
     }
     
@@ -53,9 +55,10 @@ public class NotificationController(INotificationService notificationService) : 
     {
         await notificationService.DeleteNotification(new DeleteNotificationRequest()
         {
-            AccountId = Account.Id,
+            AccountId = AccountId!.Value,
             Id = notificationId
         });
+        
         return NoContent();
     }
 }

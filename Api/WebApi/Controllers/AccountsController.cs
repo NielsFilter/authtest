@@ -1,4 +1,6 @@
-﻿namespace WebApi.Controllers;
+﻿using WebApi.Helpers;
+
+namespace WebApi.Controllers;
 
 using Microsoft.AspNetCore.Mvc;
 using Authorization;
@@ -13,7 +15,7 @@ public class AccountsController(IAccountService accountService) : BaseController
 {
     [AllowAnonymous]
     [HttpPost("authenticate")]
-    public async Task<ActionResult<AuthenticateResponse>> Authenticate(AuthenticateRequest model)
+    public async Task<ActionResult<AuthenticateDto>> Authenticate(AuthenticateRequest model)
     {
         var response = await accountService.Authenticate(model, GetIpAddress());
         SetTokenCookie(response.RefreshToken);
@@ -22,7 +24,7 @@ public class AccountsController(IAccountService accountService) : BaseController
 
     [AllowAnonymous]
     [HttpPost("refresh-token")]
-    public async Task<ActionResult<AuthenticateResponse>> RefreshToken()
+    public async Task<ActionResult<AuthenticateDto>> RefreshToken()
     {
         var refreshToken = Request.Cookies["refreshToken"];
         var response = await accountService.RefreshToken(refreshToken, GetIpAddress());
@@ -37,10 +39,15 @@ public class AccountsController(IAccountService accountService) : BaseController
         var token = model.Token ?? Request.Cookies["refreshToken"];
 
         if (string.IsNullOrEmpty(token))
+        {
             return BadRequest(new { message = "Token is required" });
-
+        }
+        
+        var account = await GetLoggedInAccountOrThrow();
+        var hasToken = account.RefreshTokens.Any(x => x.Token == token);
+        
         // users can revoke their own tokens and admins can revoke any tokens
-        if (!Account.OwnsToken(token) && Account.Role != Role.Admin)
+        if (!hasToken && !IsAccountAdmin)
             return Unauthorized(new { message = "Unauthorized" });
 
         await accountService.RevokeToken(token, GetIpAddress());
@@ -89,18 +96,20 @@ public class AccountsController(IAccountService accountService) : BaseController
 
     [Authorize(Role.Admin)]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<AccountResponse>>> GetAll()
+    public async Task<ActionResult<IEnumerable<AccountDto>>> GetAll()
     {
         var accounts = await accountService.GetAll();
         return Ok(accounts);
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<AccountResponse>> GetById(int id)
+    public async Task<ActionResult<AccountDto>> GetById(int id)
     {
         // users can get their own account and admins can get any account
-        if (id != Account.Id && Account.Role != Role.Admin)
+        if (id != AccountId && !IsAccountAdmin)
+        {
             return Unauthorized(new { message = "Unauthorized" });
+        }
 
         var account = await accountService.GetById(id);
         return Ok(account);
@@ -108,22 +117,26 @@ public class AccountsController(IAccountService accountService) : BaseController
 
     [Authorize(Role.Admin)]
     [HttpPost]
-    public async Task<ActionResult<AccountResponse>> Create(CreateRequest model)
+    public async Task<ActionResult<AccountDto>> Create(CreateRequest model)
     {
         var account = await accountService.Create(model);
         return Ok(account);
     }
 
     [HttpPut("{id:int}")]
-    public async Task<ActionResult<AccountResponse>> Update(int id, UpdateRequest model)
+    public async Task<ActionResult<AccountDto>> Update(int id, UpdateRequest model)
     {
         // users can update their own account and admins can update any account
-        if (id != Account.Id && Account.Role != Role.Admin)
+        if (id != AccountId && !IsAccountAdmin)
+        {
             return Unauthorized(new { message = "Unauthorized" });
+        }
 
-        // only admins can update role
-        if (Account.Role != Role.Admin)
-            model.Role = null;
+        if (!IsAccountAdmin)
+        {
+            // only admins can update role
+            model.Roles = new List<Role>();
+        }
 
         var account = await accountService.Update(id, model);
         return Ok(account);
@@ -133,7 +146,7 @@ public class AccountsController(IAccountService accountService) : BaseController
     public async Task<IActionResult> Delete(int id)
     {
         // users can delete their own account and admins can delete any account
-        if (id != Account.Id && Account.Role != Role.Admin)
+        if (id != AccountId && IsAccountAdmin)
             return Unauthorized(new { message = "Unauthorized" });
 
         await accountService.Delete(id);
@@ -158,5 +171,21 @@ public class AccountsController(IAccountService accountService) : BaseController
             return Request.Headers["X-Forwarded-For"];
         else
             return HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+    }
+
+    private async Task<AccountDto> GetLoggedInAccountOrThrow()
+    {
+        if (AccountId == null)
+        {
+            throw new AppException("Unauthorized"); //tODO: exceptions
+        }
+        
+        var account = await accountService.GetById(AccountId.Value);
+        if (account == null)
+        {
+            throw new AppException("Unauthorized"); //tODO: exceptions
+        }
+
+        return account;
     }
 }
