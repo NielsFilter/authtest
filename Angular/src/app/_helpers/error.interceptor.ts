@@ -2,18 +2,27 @@ import { Injectable } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-
-import { AccountService } from '@app/_services';
+import { AccountsClient } from 'src/shared/service-clients/service-clients';
+import { AuthService } from '@app/_services/auth.service';
+import { AppSessionService } from 'src/shared/common/session/app-session.service';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
-    constructor(private accountService: AccountService) { }
+    constructor(
+        private sessionService: AppSessionService,
+        private authService: AuthService
+    ) { }
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         return next.handle(request).pipe(catchError(err => {
-            if ([401, 403].includes(err.status) && this.accountService.accountValue) {
-                // auto logout if 401 or 403 response returned from api
-                this.accountService.logout();
+            if ([401, 403].includes(err.status)) {
+
+                this.sessionService.accountSession$.subscribe(account => {
+                    if (account) {
+                        // auto logout if 401 or 403 response returned from api
+                        this.authService.logout();
+                    }
+                });
             }
 
             const error = (err && err.error && err.error.message) || err.statusText;

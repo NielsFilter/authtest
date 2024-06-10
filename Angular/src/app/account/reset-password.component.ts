@@ -3,8 +3,9 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {first} from 'rxjs/operators';
 
-import {AccountService, AlertService} from '@app/_services';
-import {MustMatch} from '@app/_helpers';
+import { AlertService } from '@app/_services';
+import { MustMatch } from '@app/_helpers';
+import { AccountsClient, ResetPasswordRequest } from 'src/shared/service-clients/service-clients';
 
 enum TokenStatus {
     Validating,
@@ -25,7 +26,7 @@ export class ResetPasswordComponent implements OnInit {
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
         private router: Router,
-        private accountService: AccountService,
+        private accountClient: AccountsClient,
         private alertService: AlertService
     ) { }
 
@@ -42,7 +43,7 @@ export class ResetPasswordComponent implements OnInit {
         // remove token from url to prevent http referer leakage
         this.router.navigate([], { relativeTo: this.route, replaceUrl: true });
 
-        this.accountService.validateResetToken(token)
+        this.accountClient.accountsValidateResetToken(token)
             .pipe(first())
             .subscribe({
                 next: () => {
@@ -70,7 +71,12 @@ export class ResetPasswordComponent implements OnInit {
         }
 
         this.loading = true;
-        this.accountService.resetPassword(this.token!, this.f.password.value, this.f.confirmPassword.value)
+        const resetPasswordRequest = new ResetPasswordRequest();
+        resetPasswordRequest.token = this.token!;
+        resetPasswordRequest.password = this.f.password.value;
+        resetPasswordRequest.confirmPassword = this.f.confirmPassword.value;
+
+        this.accountClient.accountsResetPassword(resetPasswordRequest)
             .pipe(first())
             .subscribe({
                 next: () => {

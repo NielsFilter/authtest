@@ -1,19 +1,19 @@
-﻿import {Component} from '@angular/core';
-
-import {AccountService} from '@app/_services';
-import { NotificationClient, PagedRequest } from 'src/shared/service-clients/service-clients';
+﻿import { Component, Injector } from '@angular/core';
+import { AppComponentBase } from 'src/shared/common/app-component-base';
+import { NotificationClient } from 'src/shared/service-clients/service-clients';
 
 @Component({ templateUrl: 'home.component.html' })
-export class HomeComponent {
-    account = this.accountService.accountValue;
+export class HomeComponent extends AppComponentBase{
+    account = this.accountInfo!;
 
-    constructor(private accountService: AccountService, private notificationClient: NotificationClient) { }
+    constructor(injector: Injector,
+        private notificationClient: NotificationClient) { 
+            super(injector);
+        }
 
     sendNotification() {
-        const request = new PagedRequest();
-        request.index = 0;
-        request.pageSize = 10;
-
-        this.notificationClient.notificationGetAll(request).subscribe(x => { console.log(x);});
+        const pageSize = this.defaultPageSize;
+        const index = 0;
+        this.notificationClient.notificationGetAll(pageSize, index).subscribe(x => { console.log(x);});
     }
 }

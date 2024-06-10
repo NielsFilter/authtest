@@ -3,7 +3,7 @@ using WebApi.Shared;
 namespace WebApi.Authorization;
 
 using Microsoft.Extensions.Options;
-using WebApi.Helpers;
+using Helpers;
 
 public class JwtMiddleware
 {

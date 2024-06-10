@@ -1,15 +1,20 @@
-﻿import { Component } from '@angular/core';
+﻿import { Component, Injector } from '@angular/core';
 
-import { AccountService, AlertService } from '@app/_services';
+import { AlertService } from '@app/_services';
+import { AppComponentBase } from 'src/shared/common/app-component-base';
+import { AppSessionService } from 'src/shared/common/session/app-session.service';
+import { AccountDto, AccountsClient } from 'src/shared/service-clients/service-clients';
 
 @Component({ templateUrl: 'details.component.html' })
-export class DetailsComponent {
-    account = this.accountService.accountValue;
+export class DetailsComponent extends AppComponentBase {
+    account = this.accountInfo!;
 
     counter: number = 1;
-    constructor(
-        private accountService: AccountService,
-        private alertService: AlertService) { }
+    constructor(injector: Injector,
+        private accountClient: AccountsClient,
+        private alertService: AlertService) { 
+            super(injector);
+        }
 
     showSuccess() {
         this.counter++;

@@ -1,25 +1,27 @@
 ﻿import { AfterViewInit, Component, HostListener } from '@angular/core';
 
-import { AccountService } from './_services';
-import { Account, Role } from './_models';
+import { Role } from './_models';
 import { SignalrService } from './_services/signalr.service';
+import { AccountsClient, RevokeTokenRequest } from 'src/shared/service-clients/service-clients';
+import { AuthService } from './_services/auth.service';
 
 @Component({ selector: 'app-root', templateUrl: 'app.component.html' })
 export class AppComponent implements AfterViewInit {
     Role = Role;
-    account?: Account | null;
     sideCollapsed: Boolean = false;
     innerWidth: number;
 
-    constructor(private accountService: AccountService, private signalrService: SignalrService) {
-        this.accountService.account.subscribe(x => this.account = x);
-        this.innerWidth = 0;
+    constructor(
+        private accountsClient: AccountsClient,
+        private signalrService: SignalrService,
+        private authService: AuthService) {
+            this.innerWidth = 0;
 
             console.log('starting connection');
-        this.signalrService.startConnection().subscribe(() => {
-            this.signalrService.receiveMessage().subscribe((message) => {
-              console.log('got a message: ');
-              console.log(message);
+            this.signalrService.startConnection().subscribe(() => {
+                this.signalrService.receiveMessage().subscribe((message) => {
+                console.log('got a message: ');
+                console.log(message);
             });
           });
     }
@@ -28,7 +30,7 @@ export class AppComponent implements AfterViewInit {
     }
 
     logout() {
-        this.accountService.logout();
+        this.authService.logout();
     }
 
     toggleSidebar() {

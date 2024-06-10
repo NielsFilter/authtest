@@ -3,7 +3,9 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {first} from 'rxjs/operators';
 
-import {AccountService, AlertService} from '@app/_services';
+import { AlertService } from '@app/_services';
+import { AccountsClient, AuthenticateRequest } from 'src/shared/service-clients/service-clients';
+import { AuthService } from '@app/_services/auth.service';
 
 @Component({ templateUrl: 'login.component.html' })
 export class LoginComponent implements OnInit {
@@ -15,8 +17,9 @@ export class LoginComponent implements OnInit {
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
         private router: Router,
-        private accountService: AccountService,
-        private alertService: AlertService
+        private accountClient: AccountsClient,
+        private alertService: AlertService,
+        private authService: AuthService
     ) { }
 
     ngOnInit() {
@@ -41,10 +44,17 @@ export class LoginComponent implements OnInit {
         }
 
         this.submitting = true;
-        this.accountService.login(this.f.email.value, this.f.password.value)
+        // create auth body for login
+        const authBody = new AuthenticateRequest();
+        authBody.email = this.f.email.value;
+        authBody.password = this.f.password.value;
+
+        this.accountClient.accountsAuthenticate(authBody)
             .pipe(first())
             .subscribe({
-                next: () => {
+                next: authResp => {
+                    this.authService.startRefreshTokenTimer(authResp.jwtToken!);
+                    
                     // get return url from query parameters or default to home page
                     const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
                     this.router.navigateByUrl(returnUrl);

@@ -30,7 +30,7 @@ export class AccountsClient {
      * @param body (optional) 
      * @return Success
      */
-    accountsAuthenticate(body: AuthenticateRequest | undefined): Observable<AuthenticateResponse> {
+    accountsAuthenticate(body: AuthenticateRequest | undefined): Observable<AuthenticateDto> {
         let url_ = this.baseUrl + "/Accounts/authenticate";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -53,14 +53,14 @@ export class AccountsClient {
                 try {
                     return this.processAccountsAuthenticate(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<AuthenticateResponse>;
+                    return _observableThrow(e) as any as Observable<AuthenticateDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<AuthenticateResponse>;
+                return _observableThrow(response_) as any as Observable<AuthenticateDto>;
         }));
     }
 
-    protected processAccountsAuthenticate(response: HttpResponseBase): Observable<AuthenticateResponse> {
+    protected processAccountsAuthenticate(response: HttpResponseBase): Observable<AuthenticateDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -71,7 +71,7 @@ export class AccountsClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = AuthenticateResponse.fromJS(resultData200);
+            result200 = AuthenticateDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -85,7 +85,7 @@ export class AccountsClient {
     /**
      * @return Success
      */
-    accountsRefreshToken(): Observable<AuthenticateResponse> {
+    accountsRefreshToken(): Observable<AuthenticateDto> {
         let url_ = this.baseUrl + "/Accounts/refresh-token";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -104,14 +104,14 @@ export class AccountsClient {
                 try {
                     return this.processAccountsRefreshToken(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<AuthenticateResponse>;
+                    return _observableThrow(e) as any as Observable<AuthenticateDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<AuthenticateResponse>;
+                return _observableThrow(response_) as any as Observable<AuthenticateDto>;
         }));
     }
 
-    protected processAccountsRefreshToken(response: HttpResponseBase): Observable<AuthenticateResponse> {
+    protected processAccountsRefreshToken(response: HttpResponseBase): Observable<AuthenticateDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -122,7 +122,7 @@ export class AccountsClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = AuthenticateResponse.fromJS(resultData200);
+            result200 = AuthenticateDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -448,7 +448,7 @@ export class AccountsClient {
     /**
      * @return Success
      */
-    accountsGetAll(): Observable<AccountResponse[]> {
+    accountsGetAll(): Observable<AccountDto[]> {
         let url_ = this.baseUrl + "/Accounts";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -467,14 +467,14 @@ export class AccountsClient {
                 try {
                     return this.processAccountsGetAll(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<AccountResponse[]>;
+                    return _observableThrow(e) as any as Observable<AccountDto[]>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<AccountResponse[]>;
+                return _observableThrow(response_) as any as Observable<AccountDto[]>;
         }));
     }
 
-    protected processAccountsGetAll(response: HttpResponseBase): Observable<AccountResponse[]> {
+    protected processAccountsGetAll(response: HttpResponseBase): Observable<AccountDto[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -488,7 +488,7 @@ export class AccountsClient {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(AccountResponse.fromJS(item));
+                    result200!.push(AccountDto.fromJS(item));
             }
             else {
                 result200 = <any>null;
@@ -507,7 +507,7 @@ export class AccountsClient {
      * @param body (optional) 
      * @return Success
      */
-    accountsCreate(body: CreateRequest | undefined): Observable<AccountResponse> {
+    accountsCreate(body: CreateRequest | undefined): Observable<AccountDto> {
         let url_ = this.baseUrl + "/Accounts";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -530,14 +530,14 @@ export class AccountsClient {
                 try {
                     return this.processAccountsCreate(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<AccountResponse>;
+                    return _observableThrow(e) as any as Observable<AccountDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<AccountResponse>;
+                return _observableThrow(response_) as any as Observable<AccountDto>;
         }));
     }
 
-    protected processAccountsCreate(response: HttpResponseBase): Observable<AccountResponse> {
+    protected processAccountsCreate(response: HttpResponseBase): Observable<AccountDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -548,7 +548,7 @@ export class AccountsClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = AccountResponse.fromJS(resultData200);
+            result200 = AccountDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -562,7 +562,7 @@ export class AccountsClient {
     /**
      * @return Success
      */
-    accountsGetById(id: number): Observable<AccountResponse> {
+    accountsGetById(id: number): Observable<AccountDto> {
         let url_ = this.baseUrl + "/Accounts/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -584,14 +584,14 @@ export class AccountsClient {
                 try {
                     return this.processAccountsGetById(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<AccountResponse>;
+                    return _observableThrow(e) as any as Observable<AccountDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<AccountResponse>;
+                return _observableThrow(response_) as any as Observable<AccountDto>;
         }));
     }
 
-    protected processAccountsGetById(response: HttpResponseBase): Observable<AccountResponse> {
+    protected processAccountsGetById(response: HttpResponseBase): Observable<AccountDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -602,7 +602,7 @@ export class AccountsClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = AccountResponse.fromJS(resultData200);
+            result200 = AccountDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -617,7 +617,7 @@ export class AccountsClient {
      * @param body (optional) 
      * @return Success
      */
-    accountsUpdate(id: number, body: UpdateRequest | undefined): Observable<AccountResponse> {
+    accountsUpdate(id: number, body: UpdateRequest | undefined): Observable<AccountDto> {
         let url_ = this.baseUrl + "/Accounts/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -643,14 +643,14 @@ export class AccountsClient {
                 try {
                     return this.processAccountsUpdate(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<AccountResponse>;
+                    return _observableThrow(e) as any as Observable<AccountDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<AccountResponse>;
+                return _observableThrow(response_) as any as Observable<AccountDto>;
         }));
     }
 
-    protected processAccountsUpdate(response: HttpResponseBase): Observable<AccountResponse> {
+    protected processAccountsUpdate(response: HttpResponseBase): Observable<AccountDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -661,7 +661,7 @@ export class AccountsClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = AccountResponse.fromJS(resultData200);
+            result200 = AccountDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -721,6 +721,57 @@ export class AccountsClient {
         }
         return _observableOf(null as any);
     }
+
+    /**
+     * @return Success
+     */
+    accountsGetAccountSessionInfo(): Observable<AccountSessionInfo> {
+        let url_ = this.baseUrl + "/Accounts/session-info";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAccountsGetAccountSessionInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAccountsGetAccountSessionInfo(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<AccountSessionInfo>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<AccountSessionInfo>;
+        }));
+    }
+
+    protected processAccountsGetAccountSessionInfo(response: HttpResponseBase): Observable<AccountSessionInfo> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = AccountSessionInfo.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
 }
 
 @Injectable()
@@ -735,21 +786,26 @@ export class NotificationClient {
     }
 
     /**
-     * @param body (optional) 
+     * @param pageSize (optional) 
+     * @param index (optional) 
      * @return Success
      */
-    notificationGetAll(body: PagedRequest | undefined): Observable<NotificationResponse[]> {
-        let url_ = this.baseUrl + "/Notification";
+    notificationGetAll(pageSize: number | undefined, index: number | undefined): Observable<NewAccountAppNotification[]> {
+        let url_ = this.baseUrl + "/Notification?";
+        if (pageSize === null)
+            throw new Error("The parameter 'pageSize' cannot be null.");
+        else if (pageSize !== undefined)
+            url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&";
+        if (index === null)
+            throw new Error("The parameter 'index' cannot be null.");
+        else if (index !== undefined)
+            url_ += "Index=" + encodeURIComponent("" + index) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_ : any = {
-            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json",
                 "Accept": "text/plain"
             })
         };
@@ -761,14 +817,14 @@ export class NotificationClient {
                 try {
                     return this.processNotificationGetAll(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<NotificationResponse[]>;
+                    return _observableThrow(e) as any as Observable<NewAccountAppNotification[]>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<NotificationResponse[]>;
+                return _observableThrow(response_) as any as Observable<NewAccountAppNotification[]>;
         }));
     }
 
-    protected processNotificationGetAll(response: HttpResponseBase): Observable<NotificationResponse[]> {
+    protected processNotificationGetAll(response: HttpResponseBase): Observable<NewAccountAppNotification[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -782,7 +838,7 @@ export class NotificationClient {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(NotificationResponse.fromJS(item));
+                    result200!.push(NewAccountAppNotification.fromJS(item));
             }
             else {
                 result200 = <any>null;
@@ -852,7 +908,7 @@ export class NotificationClient {
     /**
      * @return Success
      */
-    notificationGetById(id: number): Observable<NotificationResponse> {
+    notificationGetById(id: number): Observable<NewAccountAppNotification> {
         let url_ = this.baseUrl + "/Notification/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -874,14 +930,14 @@ export class NotificationClient {
                 try {
                     return this.processNotificationGetById(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<NotificationResponse>;
+                    return _observableThrow(e) as any as Observable<NewAccountAppNotification>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<NotificationResponse>;
+                return _observableThrow(response_) as any as Observable<NewAccountAppNotification>;
         }));
     }
 
-    protected processNotificationGetById(response: HttpResponseBase): Observable<NotificationResponse> {
+    protected processNotificationGetById(response: HttpResponseBase): Observable<NewAccountAppNotification> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -892,7 +948,7 @@ export class NotificationClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = NotificationResponse.fromJS(resultData200);
+            result200 = NewAccountAppNotification.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -904,7 +960,7 @@ export class NotificationClient {
     }
 }
 
-export class AccountResponse {
+export class AccountDto {
     id?: number;
     title?: string | undefined;
     firstName?: string | undefined;
@@ -914,6 +970,7 @@ export class AccountResponse {
     created?: Date;
     updated?: Date | undefined;
     isVerified?: boolean;
+    refreshTokens?: RefreshTokenDto[] | undefined;
 
     init(_data?: any) {
         if (_data) {
@@ -926,12 +983,17 @@ export class AccountResponse {
             this.created = _data["created"] ? new Date(_data["created"].toString()) : <any>undefined;
             this.updated = _data["updated"] ? new Date(_data["updated"].toString()) : <any>undefined;
             this.isVerified = _data["isVerified"];
+            if (Array.isArray(_data["refreshTokens"])) {
+                this.refreshTokens = [] as any;
+                for (let item of _data["refreshTokens"])
+                    this.refreshTokens!.push(RefreshTokenDto.fromJS(item));
+            }
         }
     }
 
-    static fromJS(data: any): AccountResponse {
+    static fromJS(data: any): AccountDto {
         data = typeof data === 'object' ? data : {};
-        let result = new AccountResponse();
+        let result = new AccountDto();
         result.init(data);
         return result;
     }
@@ -947,37 +1009,39 @@ export class AccountResponse {
         data["created"] = this.created ? this.created.toISOString() : <any>undefined;
         data["updated"] = this.updated ? this.updated.toISOString() : <any>undefined;
         data["isVerified"] = this.isVerified;
+        if (Array.isArray(this.refreshTokens)) {
+            data["refreshTokens"] = [];
+            for (let item of this.refreshTokens)
+                data["refreshTokens"].push(item.toJSON());
+        }
         return data;
     }
 }
 
-export class AuthenticateRequest {
-    email!: string;
-    password!: string;
+export class AccountSessionInfo {
+    account?: AccountDto;
 
     init(_data?: any) {
         if (_data) {
-            this.email = _data["email"];
-            this.password = _data["password"];
+            this.account = _data["account"] ? AccountDto.fromJS(_data["account"]) : <any>undefined;
         }
     }
 
-    static fromJS(data: any): AuthenticateRequest {
+    static fromJS(data: any): AccountSessionInfo {
         data = typeof data === 'object' ? data : {};
-        let result = new AuthenticateRequest();
+        let result = new AccountSessionInfo();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["email"] = this.email;
-        data["password"] = this.password;
+        data["account"] = this.account ? this.account.toJSON() : <any>undefined;
         return data;
     }
 }
 
-export class AuthenticateResponse {
+export class AuthenticateDto {
     id?: number;
     title?: string | undefined;
     firstName?: string | undefined;
@@ -1004,9 +1068,9 @@ export class AuthenticateResponse {
         }
     }
 
-    static fromJS(data: any): AuthenticateResponse {
+    static fromJS(data: any): AuthenticateDto {
         data = typeof data === 'object' ? data : {};
-        let result = new AuthenticateResponse();
+        let result = new AuthenticateDto();
         result.init(data);
         return result;
     }
@@ -1023,6 +1087,32 @@ export class AuthenticateResponse {
         data["updated"] = this.updated ? this.updated.toISOString() : <any>undefined;
         data["isVerified"] = this.isVerified;
         data["jwtToken"] = this.jwtToken;
+        return data;
+    }
+}
+
+export class AuthenticateRequest {
+    email!: string;
+    password!: string;
+
+    init(_data?: any) {
+        if (_data) {
+            this.email = _data["email"];
+            this.password = _data["password"];
+        }
+    }
+
+    static fromJS(data: any): AuthenticateRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new AuthenticateRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["email"] = this.email;
+        data["password"] = this.password;
         return data;
     }
 }
@@ -1091,12 +1181,13 @@ export class ForgotPasswordRequest {
     }
 }
 
-export class NotificationResponse {
+export class NewAccountAppNotification {
     id?: number;
     message?: string | undefined;
     type?: NotificationTypes;
     isRead?: boolean;
     createdTimestamp?: Date;
+    targetAccountId?: number;
 
     init(_data?: any) {
         if (_data) {
@@ -1105,12 +1196,13 @@ export class NotificationResponse {
             this.type = _data["type"];
             this.isRead = _data["isRead"];
             this.createdTimestamp = _data["createdTimestamp"] ? new Date(_data["createdTimestamp"].toString()) : <any>undefined;
+            this.targetAccountId = _data["targetAccountId"];
         }
     }
 
-    static fromJS(data: any): NotificationResponse {
+    static fromJS(data: any): NewAccountAppNotification {
         data = typeof data === 'object' ? data : {};
-        let result = new NotificationResponse();
+        let result = new NewAccountAppNotification();
         result.init(data);
         return result;
     }
@@ -1122,6 +1214,7 @@ export class NotificationResponse {
         data["type"] = this.type;
         data["isRead"] = this.isRead;
         data["createdTimestamp"] = this.createdTimestamp ? this.createdTimestamp.toISOString() : <any>undefined;
+        data["targetAccountId"] = this.targetAccountId;
         return data;
     }
 }
@@ -1133,28 +1226,52 @@ export enum NotificationTypes {
     Error = "Error",
 }
 
-export class PagedRequest {
-    pageSize?: number;
-    index?: number;
+export class RefreshTokenDto {
+    token?: string | undefined;
+    expires?: Date;
+    created?: Date;
+    createdByIp?: string | undefined;
+    revoked?: Date | undefined;
+    revokedByIp?: string | undefined;
+    reasonRevoked?: string | undefined;
+    isExpired?: boolean;
+    isRevoked?: boolean;
+    isActive?: boolean;
 
     init(_data?: any) {
         if (_data) {
-            this.pageSize = _data["pageSize"];
-            this.index = _data["index"];
+            this.token = _data["token"];
+            this.expires = _data["expires"] ? new Date(_data["expires"].toString()) : <any>undefined;
+            this.created = _data["created"] ? new Date(_data["created"].toString()) : <any>undefined;
+            this.createdByIp = _data["createdByIp"];
+            this.revoked = _data["revoked"] ? new Date(_data["revoked"].toString()) : <any>undefined;
+            this.revokedByIp = _data["revokedByIp"];
+            this.reasonRevoked = _data["reasonRevoked"];
+            this.isExpired = _data["isExpired"];
+            this.isRevoked = _data["isRevoked"];
+            this.isActive = _data["isActive"];
         }
     }
 
-    static fromJS(data: any): PagedRequest {
+    static fromJS(data: any): RefreshTokenDto {
         data = typeof data === 'object' ? data : {};
-        let result = new PagedRequest();
+        let result = new RefreshTokenDto();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["pageSize"] = this.pageSize;
-        data["index"] = this.index;
+        data["token"] = this.token;
+        data["expires"] = this.expires ? this.expires.toISOString() : <any>undefined;
+        data["created"] = this.created ? this.created.toISOString() : <any>undefined;
+        data["createdByIp"] = this.createdByIp;
+        data["revoked"] = this.revoked ? this.revoked.toISOString() : <any>undefined;
+        data["revokedByIp"] = this.revokedByIp;
+        data["reasonRevoked"] = this.reasonRevoked;
+        data["isExpired"] = this.isExpired;
+        data["isRevoked"] = this.isRevoked;
+        data["isActive"] = this.isActive;
         return data;
     }
 }
@@ -1252,11 +1369,16 @@ export class RevokeTokenRequest {
     }
 }
 
+export enum Role {
+    Admin = "Admin",
+    User = "User",
+}
+
 export class UpdateRequest {
     title?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    role?: string | undefined;
+    roles?: Role[] | undefined;
     email?: string | undefined;
     password?: string | undefined;
     confirmPassword?: string | undefined;
@@ -1266,7 +1388,11 @@ export class UpdateRequest {
             this.title = _data["title"];
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
-            this.role = _data["role"];
+            if (Array.isArray(_data["roles"])) {
+                this.roles = [] as any;
+                for (let item of _data["roles"])
+                    this.roles!.push(item);
+            }
             this.email = _data["email"];
             this.password = _data["password"];
             this.confirmPassword = _data["confirmPassword"];
@@ -1285,7 +1411,11 @@ export class UpdateRequest {
         data["title"] = this.title;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
-        data["role"] = this.role;
+        if (Array.isArray(this.roles)) {
+            data["roles"] = [];
+            for (let item of this.roles)
+                data["roles"].push(item);
+        }
         data["email"] = this.email;
         data["password"] = this.password;
         data["confirmPassword"] = this.confirmPassword;

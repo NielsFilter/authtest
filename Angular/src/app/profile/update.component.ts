@@ -1,26 +1,30 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { Component, Injector, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 
-import { AccountService, AlertService } from '@app/_services';
+import { AlertService } from '@app/_services';
 import { MustMatch } from '@app/_helpers';
+import { AccountDto, AccountsClient } from 'src/shared/service-clients/service-clients';
+import { AppComponentBase } from 'src/shared/common/app-component-base';
 
 @Component({ templateUrl: 'update.component.html' })
-export class UpdateComponent implements OnInit {
-    account = this.accountService.accountValue!;
+export class UpdateComponent extends AppComponentBase implements OnInit {
+    account: AccountDto = this.accountInfo!;
     form!: FormGroup;
     submitting = false;
     submitted = false;
     deleting = false;
 
-    constructor(
+    constructor(injector: Injector,
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
         private router: Router,
-        private accountService: AccountService,
+        private accountClient: AccountsClient,
         private alertService: AlertService
-    ) { }
+    ) {
+        super(injector);
+     }
 
     ngOnInit() {
         this.form = this.formBuilder.group({
@@ -50,7 +54,7 @@ export class UpdateComponent implements OnInit {
         }
 
         this.submitting = true;
-        this.accountService.update(this.account.id!, this.form.value)
+        this.accountClient.accountsUpdate(this.account.id!, this.form.value)
             .pipe(first())
             .subscribe({
                 next: () => {
@@ -67,7 +71,7 @@ export class UpdateComponent implements OnInit {
     onDelete() {
         if (confirm('Are you sure?')) {
             this.deleting = true;
-            this.accountService.delete(this.account.id!)
+            this.accountClient.accountsDelete(this.account.id!)
                 .pipe(first())
                 .subscribe(() => {
                     this.alertService.success('Account deleted successfully');

@@ -188,4 +188,15 @@ public class AccountsController(IAccountService accountService) : BaseController
 
         return account;
     }
+    
+    [HttpGet("session-info")]
+    public async Task<AccountSessionInfo> GetAccountSessionInfo()
+    {
+        var account = await accountService.GetById(AccountId!.Value);
+        if (account == null)
+        {
+            throw new AppException("Unauthorized"); //tODO: exceptions
+        }
+        return new AccountSessionInfo(account);
+    }
 }
