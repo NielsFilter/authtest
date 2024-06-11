@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map, take } from 'rxjs/operators';
 import { AccountsClient } from 'src/shared/service-clients/service-clients';
 import { AuthService } from '@app/_services/auth.service';
 import { AppSessionService } from 'src/shared/common/session/app-session.service';
@@ -17,12 +17,14 @@ export class ErrorInterceptor implements HttpInterceptor {
         return next.handle(request).pipe(catchError(err => {
             if ([401, 403].includes(err.status)) {
 
-                this.sessionService.accountSession$.subscribe(account => {
+                this.sessionService.accountSession$.pipe(
+                    take(1),
+                    map(account => {
                     if (account) {
                         // auto logout if 401 or 403 response returned from api
                         this.authService.logout();
                     }
-                });
+                }));
             }
 
             const error = (err && err.error && err.error.message) || err.statusText;
