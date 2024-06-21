@@ -3,13 +3,14 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {first} from 'rxjs/operators';
 
-import {AccountService, AlertService} from '@app/_services';
+import {AlertService} from '@app/_services';
 import {MustMatch} from '@app/_helpers';
+import { AccountsClient } from 'src/shared/service-clients/service-clients';
 
 @Component({ templateUrl: 'add-edit.component.html' })
 export class AddEditComponent implements OnInit {
     form!: FormGroup;
-    id?: string;
+    id?: number;
     title!: string;
     loading = false;
     submitting = false;
@@ -19,7 +20,7 @@ export class AddEditComponent implements OnInit {
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
         private router: Router,
-        private accountService: AccountService,
+        private accountClient: AccountsClient,
         private alertService: AlertService
     ) { }
 
@@ -44,7 +45,7 @@ export class AddEditComponent implements OnInit {
             // edit mode
             this.title = 'Edit Account';
             this.loading = true;
-            this.accountService.getById(this.id)
+            this.accountClient.accountsGetById(this.id)
                 .pipe(first())
                 .subscribe(x => {
                     this.form.patchValue(x);
@@ -73,10 +74,10 @@ export class AddEditComponent implements OnInit {
         let saveAccount;
         let message: string;
         if (this.id) {
-            saveAccount = () => this.accountService.update(this.id!, this.form.value);
+            saveAccount = () => this.accountClient.accountsUpdate(this.id!, this.form.value);
             message = 'Account updated';
         } else {
-            saveAccount = () => this.accountService.create(this.form.value);
+            saveAccount = () => this.accountClient.accountsCreate(this.form.value);
             message = 'Account created';
         }
 
@@ -87,7 +88,7 @@ export class AddEditComponent implements OnInit {
                     this.alertService.success(message);
                     this.router.navigateByUrl('/admin/accounts');
                 },
-                error: error => {
+                error: (error: string) => {
                     this.alertService.error(error);
                     this.submitting = false;
                 }

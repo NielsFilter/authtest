@@ -10,7 +10,7 @@ namespace WebApi.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("[controller]")]
+[Route($"{ApiVersioning.V1}/[controller]")]
 public class NotificationController(INotificationService notificationService) : BaseController
 {
     [HttpGet]

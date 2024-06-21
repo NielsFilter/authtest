@@ -10,7 +10,6 @@ public class AccountProfile : Profile
     {
         CreateMap<RefreshToken, RefreshTokenDto>();
         CreateMap<Account, AccountDto>();
-        CreateMap<Account, AuthenticateDto>();
         CreateMap<RegisterRequest, Account>();
         CreateMap<CreateRequest, Account>();
         CreateMap<UpdateRequest, Account>();

@@ -12,9 +12,8 @@ using Models.Accounts;
 
 public interface IAccountService
 {
-    Task<AuthenticateDto> Authenticate(AuthenticateRequest model, string ipAddress);
-    Task<AuthenticateDto> RefreshToken(string token, string ipAddress);
-    Task RevokeToken(string token, string ipAddress);
+    Task<AuthenticationResult> Authenticate(AuthenticateRequest model, string ipAddress);
+    Task<AuthenticationResult> RefreshToken(string token, string ipAddress);
     Task Register(RegisterRequest model, string origin);
     Task VerifyEmail(string token);
     Task ForgotPassword(ForgotPasswordRequest model, string origin);
@@ -38,7 +37,7 @@ public class AccountService(
     private readonly AppSettings _appSettings = appSettings.Value;
     private readonly IAccountRepository _accountRepository = repositoryFactory.CreateAccountRepository();
 
-    public async Task<AuthenticateDto> Authenticate(AuthenticateRequest model, string ipAddress)
+    public async Task<AuthenticationResult> Authenticate(AuthenticateRequest model, string ipAddress)
     {
         var account = await _accountRepository.GetByEmail(model.Email);
 
@@ -63,14 +62,27 @@ public class AccountService(
             // remove old refresh tokens from account
             await _accountRepository.RemoveRefreshTokensOlderThanTtl(account.Id, _appSettings.RefreshTokenTTL);
         });
-        
-        var response = mapper.Map<AuthenticateDto>(account);
-        response.JwtToken = jwtToken;
-        response.RefreshToken = refreshToken.Token;
-        return response;
+
+        return CreateAuthenticationResult(account, roles, jwtToken, refreshToken);
     }
 
-    public async Task<AuthenticateDto> RefreshToken(string token, string ipAddress)
+    private AuthenticationResult CreateAuthenticationResult(Account account, List<Role> roles, string jwtToken,
+        RefreshToken refreshToken)
+    {
+        var accountDto = mapper.Map<AccountDto>(account);
+        accountDto.Roles = roles.Select(x => x.ToString()).ToList();
+        return new AuthenticationResult
+        {
+            Account = accountDto,
+            Authenticate = new AuthenticateDto
+            {
+                JwtToken = jwtToken,
+                RefreshToken = refreshToken.Token
+            }
+        };
+    }
+
+    public async Task<AuthenticationResult> RefreshToken(string token, string ipAddress)
     {
         var uow = repositoryFactory.CreateUnitOfWork();
         return await uow.Run(async () =>
@@ -86,7 +98,7 @@ public class AccountService(
 
             if (!refreshToken.IsActive)
             {
-                throw new AppException("Invalid token");
+                throw new UnauthorizedAccessException("Invalid token");
             }
 
             // replace old refresh token with a new one (rotate token)
@@ -102,23 +114,8 @@ public class AccountService(
             var jwtToken = tokenAuthService.GenerateJwtToken(account, roles);
 
             // return data in authenticate response object
-            var response = mapper.Map<AuthenticateDto>(account);
-            response.JwtToken = jwtToken;
-            response.RefreshToken = newRefreshToken.Token;
-            return response;
+            return CreateAuthenticationResult(account, roles, jwtToken, newRefreshToken);
         });
-    }
-
-    public async Task RevokeToken(string token, string ipAddress)
-    {
-        var account = await GetAccountByRefreshToken(token);
-        var refreshToken = account.RefreshTokens.Single(x => x.Token == token);
-
-        if (!refreshToken.IsActive)
-            throw new AppException("Invalid token");
-
-        // revoke token and save
-        await  _accountRepository.RevokeToken(account.Id, token, ipAddress, "Revoked without replacement");
     }
 
     public async Task Register(RegisterRequest model, string origin)
@@ -253,12 +250,13 @@ public class AccountService(
                 throw new AppException($"Email '{model.Email}' is already registered");
             }
         }
-        
-        // roles have been set, update them on the profile
-        if (model.Roles.Count != 0)
-        {
-            await _accountRepository.SetRoles(account.Id, model.Roles);
-        }
+
+        //TODO: 
+        // // roles have been set, update them on the profile
+        // if (model.Roles.Count != 0)
+        // {
+        //     await _accountRepository.SetRoles(account.Id, model.Roles);
+        // }
 
         // hash password if it was entered
         if (!string.IsNullOrEmpty(model.Password))
@@ -290,7 +288,7 @@ public class AccountService(
     private async Task<Account> GetAccountByRefreshToken(string token)
     {
         var account =  await  _accountRepository.GetByRefreshToken(token);
-        if (account == null) throw new AppException("Invalid token");
+        if (account == null) throw new UnauthorizedAccessException("Invalid token");
         return account;
     }
 
@@ -299,7 +297,7 @@ public class AccountService(
         var account = await  _accountRepository.GetByResetToken(token);
         if (account == null || account.ResetTokenExpires > DateTime.UtcNow)
         {
-            throw new AppException("Invalid token");
+            throw new UnauthorizedAccessException("Invalid token");
         }
 
         return account;

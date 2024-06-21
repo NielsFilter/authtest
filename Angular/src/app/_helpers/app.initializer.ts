@@ -1,11 +1,12 @@
 import { catchError, of } from 'rxjs';
+import { AccountsClient } from 'src/shared/service-clients/service-clients';
 
-import { AccountService } from '@app/_services';
-
-export function appInitializer(accountService: AccountService) {
-    return () => accountService.refreshToken()
-        .pipe(
-            // catch error to start app on success or failure
-            catchError(() => of())
-        );
+export function appInitializer(accountClient: AccountsClient) {
+    return () => of();
+        //TODO: 
+        // accountClient.accountsRefreshToken()
+        // .pipe(
+        //     // catch error to start app on success or failure
+        //     catchError(() => of())
+        // );
 }

@@ -3,8 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import * as signalR from "@microsoft/signalr"
 import { Observable } from 'rxjs';
-import { NotificationResponse } from 'src/shared/service-clients/service-clients';
-import { AccountService } from './account.service';
+import { AccountsClient } from 'src/shared/service-clients/service-clients';
 
 @Injectable({
   providedIn: 'root'
@@ -13,47 +12,48 @@ export class SignalrService {
 
   private hubConnection!: signalR.HubConnection;
 
-  constructor(private accountService: AccountService) {
-    var token = accountService?.accountValue?.jwtToken;
-    if(!token) {
-      return;
-    }
+  constructor(private accountClient: AccountsClient) {
+    //TODO: 
+    // var token = accountService?.accountValue?.jwtToken;
+    // if(!token) {
+    //   return;
+    // }
 
-    this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`${environment.apiUrl}/Notify`, { accessTokenFactory: () => token! }) // SignalR hub URL
-      .build();
+    // this.hubConnection = new signalR.HubConnectionBuilder()
+    //   .withUrl(`${environment.apiUrl}/Notify`, { accessTokenFactory: () => token! }) // SignalR hub URL
+    //   .build();
   }
 
-  startConnection(): Observable<void> {
-    return new Observable<void>((observer) => {
-      this.hubConnection
-        .start()
-        .then(() => {
-          console.log('Connection established with SignalR hub');
-          observer.next();
-          observer.complete();
-        })
-        .catch((error) => {
-          console.error('Error connecting to SignalR hub:', error);
-          observer.error(error);
-        });
-    });
-  }
+  // startConnection(): Observable<void> {
+  //   return new Observable<void>((observer) => {
+  //     this.hubConnection
+  //       .start()
+  //       .then(() => {
+  //         console.log('Connection established with SignalR hub');
+  //         observer.next();
+  //         observer.complete();
+  //       })
+  //       .catch((error) => {
+  //         console.error('Error connecting to SignalR hub:', error);
+  //         observer.error(error);
+  //       });
+  //   });
+  // }
 
-  receiveMessage() : Observable<NotificationResponse> {
-    return new Observable<NotificationResponse>((observer) => {
-      this.hubConnection.on('NewNotification', (notification: NotificationResponse) => {
-        console.log('YES!!!!');
-        console.log(notification);
-        observer.next(notification);
-      });
-    });
-  }
+  // receiveMessage() : Observable<NotificationResponse> {
+  //   return new Observable<NotificationResponse>((observer) => {
+  //     this.hubConnection.on('NewNotification', (notification: NotificationResponse) => {
+  //       console.log('YES!!!!');
+  //       console.log(notification);
+  //       observer.next(notification);
+  //     });
+  //   });
+  // }
 
     // public startConnection = () => {
     //   console.log('starting');
     //   this.hubConnection = new signalR.HubConnectionBuilder()
-    //                           .withUrl('http://localhost:4000/Notify',{ skipNegotiation: true,
+    //                           .withUrl('https://localhost:58914/Notify',{ skipNegotiation: true,
     //                           transport: signalR.HttpTransportType.WebSockets})
     //                           .build();
     //   this.hubConnection

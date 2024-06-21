@@ -23,6 +23,7 @@ export class LoginComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+        this.authService.clearData();
         this.form = this.formBuilder.group({
             email: ['', [Validators.required, Validators.email]],
             password: ['', Validators.required]
@@ -49,12 +50,10 @@ export class LoginComponent implements OnInit {
         authBody.email = this.f.email.value;
         authBody.password = this.f.password.value;
 
-        this.accountClient.accountsAuthenticate(authBody)
+        this.authService.login(authBody)
             .pipe(first())
             .subscribe({
-                next: authResp => {
-                    this.authService.startRefreshTokenTimer(authResp.jwtToken!);
-                    
+                next: authResp => {                    
                     // get return url from query parameters or default to home page
                     const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
                     this.router.navigateByUrl(returnUrl);

@@ -29,7 +29,7 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
 
         // authorization
         var accountId = context.HttpContext.Items["AccountId"] as int?;
-        if (accountId is <= 0)
+        if (accountId is null or <= 0)
         {
             // not logged in
             context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };   

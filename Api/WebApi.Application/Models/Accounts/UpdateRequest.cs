@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace WebApi.Models.Accounts;
 
 using System.ComponentModel.DataAnnotations;
@@ -13,8 +15,6 @@ public class UpdateRequest
     public string Title { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
-
-    public List<Role> Roles { get; set; }
 
     [EmailAddress]
     public string? Email

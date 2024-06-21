@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -99,10 +100,12 @@ using (var scope = app.Services.CreateScope())
         app.UseSwagger();
         app.UseSwaggerUI();
     }
-
+    
+    var options = app.Services.GetRequiredService<IOptions<AppSettings>>();
     // global cors policy
     app.UseCors(x => x
-        .SetIsOriginAllowed(origin => true)
+        .WithOrigins(options.Value.AllowedOrigins.Split(";"))
+        //TODO: .SetIsOriginAllowed(origin => true)
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials());
@@ -120,4 +123,4 @@ using (var scope = app.Services.CreateScope())
     app.MapControllers();
 }
 
-app.Run("http://localhost:4000");
+app.Run("https://localhost:58914");

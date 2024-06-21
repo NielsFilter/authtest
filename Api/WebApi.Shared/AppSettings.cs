@@ -13,4 +13,5 @@ public class AppSettings
     public int SmtpPort { get; set; }
     public string SmtpUser { get; set; }
     public string SmtpPass { get; set; }
+    public string AllowedOrigins { get; set; }
 }

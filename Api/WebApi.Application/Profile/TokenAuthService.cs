@@ -42,7 +42,7 @@ public class TokenAuthService(
                 new Claim(TokenClaimAccountId, account.Id.ToString()),
                 new Claim(TokenClaimAccountRoles, string.Join(",", roles)),
             }),
-            Expires = DateTime.UtcNow.AddMinutes(15),
+            Expires = DateTime.UtcNow.AddSeconds(20), //TODO: .AddMinutes(15),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);

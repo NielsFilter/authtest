@@ -3,35 +3,33 @@ namespace WebApi.Helpers;
 using System.Net;
 using System.Text.Json;
 
-public class ErrorHandlerMiddleware
+public class ErrorHandlerMiddleware(RequestDelegate next, ILogger<ErrorHandlerMiddleware> logger)
 {
-    private readonly RequestDelegate _next;
-    private readonly ILogger _logger;
-
-    public ErrorHandlerMiddleware(RequestDelegate next, ILogger<ErrorHandlerMiddleware> logger)
-    {
-        _next = next;
-        _logger = logger;
-    }
+    private readonly ILogger _logger = logger;
 
     public async Task Invoke(HttpContext context)
     {
         try
         {
-            await _next(context);
+            await next(context);
         }
         catch (Exception error)
         {
+            _logger.LogError(error, "Http error occurred");
             var response = context.Response;
             response.ContentType = "application/json";
 
             switch (error)
             {
-                case AppException e:
+                case UnauthorizedAccessException:
+                    // unauthenticated error
+                    response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                    break;
+                case AppException:
                     // custom application error
                     response.StatusCode = (int)HttpStatusCode.BadRequest;
                     break;
-                case KeyNotFoundException e:
+                case KeyNotFoundException:
                     // not found error
                     response.StatusCode = (int)HttpStatusCode.NotFound;
                     break;
@@ -42,7 +40,7 @@ public class ErrorHandlerMiddleware
                     break;
             }
 
-            var result = JsonSerializer.Serialize(new { message = error?.Message });
+            var result = JsonSerializer.Serialize(new { message = error.Message });
             await response.WriteAsync(result);
         }
     }

@@ -10,48 +10,26 @@ using Services;
 
 [Authorize]
 [ApiController]
-[Route("[controller]")]
+[Route($"{ApiVersioning.V1}/[controller]")]
 public class AccountsController(IAccountService accountService) : BaseController
 {
     [AllowAnonymous]
     [HttpPost("authenticate")]
-    public async Task<ActionResult<AuthenticateDto>> Authenticate(AuthenticateRequest model)
+    public async Task<ActionResult<AuthenticationResult>> Authenticate(AuthenticateRequest model)
     {
         var response = await accountService.Authenticate(model, GetIpAddress());
-        SetTokenCookie(response.RefreshToken);
+        //TODO: SetTokenCookie(response.RefreshToken);
         return Ok(response);
     }
 
     [AllowAnonymous]
     [HttpPost("refresh-token")]
-    public async Task<ActionResult<AuthenticateDto>> RefreshToken()
+    public async Task<ActionResult<AuthenticationResult>> RefreshToken(string refreshToken)
     {
-        var refreshToken = Request.Cookies["refreshToken"];
+        //TODO: var refreshToken = Request.Cookies["refreshToken"];
         var response = await accountService.RefreshToken(refreshToken, GetIpAddress());
-        SetTokenCookie(response.RefreshToken);
+       //TODO:  SetTokenCookie(response.RefreshToken);
         return Ok(response);
-    }
-
-    [HttpPost("revoke-token")]
-    public async Task<IActionResult> RevokeToken(RevokeTokenRequest model)
-    {
-        // accept token from request body or cookie
-        var token = model.Token ?? Request.Cookies["refreshToken"];
-
-        if (string.IsNullOrEmpty(token))
-        {
-            return BadRequest(new { message = "Token is required" });
-        }
-        
-        var account = await GetLoggedInAccountOrThrow();
-        var hasToken = account.RefreshTokens.Any(x => x.Token == token);
-        
-        // users can revoke their own tokens and admins can revoke any tokens
-        if (!hasToken && !IsAccountAdmin)
-            return Unauthorized(new { message = "Unauthorized" });
-
-        await accountService.RevokeToken(token, GetIpAddress());
-        return Ok(new { message = "Token revoked" });
     }
 
     [AllowAnonymous]
@@ -132,11 +110,12 @@ public class AccountsController(IAccountService accountService) : BaseController
             return Unauthorized(new { message = "Unauthorized" });
         }
 
-        if (!IsAccountAdmin)
-        {
-            // only admins can update role
-            model.Roles = new List<Role>();
-        }
+        //TODO: 
+        // if (!IsAccountAdmin)
+        // {
+        //     // only admins can update role
+        //     model.Roles = new List<Role>();
+        // }
 
         var account = await accountService.Update(id, model);
         return Ok(account);
@@ -155,15 +134,17 @@ public class AccountsController(IAccountService accountService) : BaseController
 
     // helper methods
 
-    private void SetTokenCookie(string token)
-    {
-        var cookieOptions = new CookieOptions
-        {
-            HttpOnly = true,
-            Expires = DateTime.UtcNow.AddDays(7)
-        };
-        Response.Cookies.Append("refreshToken", token, cookieOptions);
-    }
+    //TODO: 
+    // private void SetTokenCookie(string token)
+    // {
+    //     var cookieOptions = new CookieOptions
+    //     {
+    //         HttpOnly = true,
+    //         Domain = Request.Host.Value, //TODO: new Uri(Request.Headers.Origin!).Authority,
+    //         Expires = DateTime.UtcNow.AddDays(7)
+    //     };
+    //     Response.Cookies.Append("refreshToken", token, cookieOptions);
+    // }
 
     private string GetIpAddress()
     {

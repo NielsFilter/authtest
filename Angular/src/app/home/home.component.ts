@@ -4,8 +4,6 @@ import { NotificationClient } from 'src/shared/service-clients/service-clients';
 
 @Component({ templateUrl: 'home.component.html' })
 export class HomeComponent extends AppComponentBase{
-    account = this.accountInfo!;
-
     constructor(injector: Injector,
         private notificationClient: NotificationClient) { 
             super(injector);

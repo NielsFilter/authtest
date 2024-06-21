@@ -1,6 +1,6 @@
 ﻿import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -11,6 +11,8 @@ import { HomeComponent } from './home';
 import { ServiceClientModule } from 'src/shared/service-clients/service-client.module';
 import { environment } from '@environments/environment';
 import { CommonModule } from '@angular/common';
+import { AccountsClient } from 'src/shared/service-clients/service-clients';
+import { AppCommonModule } from 'src/shared/common/app-common.module';
 
 @NgModule({
     imports: [
@@ -19,7 +21,8 @@ import { CommonModule } from '@angular/common';
         HttpClientModule,
         AppRoutingModule,
         ServiceClientModule,
-        CommonModule
+        AppCommonModule,
+        FormsModule
     ],
     declarations: [
         AppComponent,
@@ -27,7 +30,7 @@ import { CommonModule } from '@angular/common';
         HomeComponent
     ],
     providers: [
-        { provide: APP_INITIALIZER, useFactory: appInitializer, multi: true },
+        { provide: APP_INITIALIZER, useFactory: appInitializer, deps: [AccountsClient], multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
     ],

@@ -1,50 +1,42 @@
-﻿import { Injectable } from '@angular/core';
-import {
-  Router,
-  CanActivate,
-  ActivatedRouteSnapshot,
-  RouterStateSnapshot,
-} from '@angular/router';
-import { catchError, map, of } from 'rxjs';
-import { AppSessionService } from 'src/shared/common/session/app-session.service';
+﻿import { inject } from '@angular/core';
+import { Router, CanActivateFn } from '@angular/router';
+import { AuthService } from '@app/_services/auth.service';
+import { catchError, map, of, take } from 'rxjs';
 
-@Injectable({ providedIn: 'root' })
-export class AuthGuard implements CanActivate {
-  constructor(
-    private router: Router,
-    private appSessionService: AppSessionService
-  ) {}
+export const AuthGuard: CanActivateFn = (route, state) => {
+  const router = inject(Router);
+  const authService = inject(AuthService);
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    return this.appSessionService.accountSession$.pipe(
-      map((account) => {
-        if (account) {
-          // check if route is restricted by role
-          if (
-            route.data.roles &&
-            !route.data.roles.includes(account.account?.role)
-          ) {
-            // role not authorized so redirect to home page
-            this.router.navigate(['/']);
-            return false;
+  return authService.account$.pipe(
+    take(1), // take the first one and then unsubscribe automatically
+    map((account) => {
+      if (account?.roles != null) {
+        // check if route is restricted by role
+        if (route.data.roles) {
+          for (const role of route.data.roles) {
+            if (account.roles.indexOf(role) < 0) {
+              // Unauthorized - don't have all the required roles
+              router.navigate(['/']);
+              return false;
+            }
           }
-
-          // authorized so return true
-          return true;
         }
 
-        // not logged in so redirect to login page with the return url
-        this.router.navigate(['/account/login'], {
-          queryParams: { returnUrl: state.url },
-        });
-        return false;
-      }),
-      catchError((err) => {
-        this.router.navigate(['/account/login'], {
-          queryParams: { returnUrl: state.url },
-        });
-        return of(false);
-      })
-    );
-  }
-}
+        // authorized so return true
+        return true;
+      }
+
+      // not logged in so redirect to login page with the return url
+      router.navigate(['/account/login'], {
+        queryParams: { returnUrl: state.url },
+      });
+      return false;
+    }),
+    catchError((err) => {
+      router.navigate(['/account/login'], {
+        queryParams: { returnUrl: state.url },
+      });
+      return of(false);
+    })
+  );
+};
