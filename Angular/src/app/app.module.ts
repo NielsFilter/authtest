@@ -13,6 +13,7 @@ import { environment } from '@environments/environment';
 import { CommonModule } from '@angular/common';
 import { AccountsClient } from 'src/shared/service-clients/service-clients';
 import { AppCommonModule } from 'src/shared/common/app-common.module';
+import { TableModule } from 'primeng/table';
 
 @NgModule({
     imports: [
@@ -22,7 +23,8 @@ import { AppCommonModule } from 'src/shared/common/app-common.module';
         AppRoutingModule,
         ServiceClientModule,
         AppCommonModule,
-        FormsModule
+        FormsModule,
+        TableModule
     ],
     declarations: [
         AppComponent,

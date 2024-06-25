@@ -1,16 +1,23 @@
 ﻿import {Component, OnInit} from '@angular/core';
-import {first} from 'rxjs/operators';
+import {finalize, first} from 'rxjs/operators';
 import { AccountsClient } from 'src/shared/service-clients/service-clients';
 
 @Component({ templateUrl: 'list.component.html' })
 export class ListComponent implements OnInit {
     accounts?: any[];
+    loading: boolean = false;
 
     constructor(private accountClient: AccountsClient) { }
 
     ngOnInit() {
+    }
+
+    loadAccounts() {
+        this.loading = true;
         this.accountClient.accountsGetAll()
-            .pipe(first())
+            .pipe(
+                first(),
+                finalize(() => this.loading = true))
             .subscribe(accounts => this.accounts = accounts);
     }
 
