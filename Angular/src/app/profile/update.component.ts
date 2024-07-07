@@ -5,7 +5,7 @@ import { first } from 'rxjs/operators';
 
 import { AlertService } from '@app/_services';
 import { MustMatch } from '@app/_helpers';
-import { AccountDto, AccountsClient, ProfileClient, ProfileUpdateRequest } from 'src/shared/service-clients/service-clients';
+import { ProfileClient, ProfileUpdateRequest } from 'src/shared/service-clients/service-clients';
 import { AppComponentBase } from 'src/shared/common/app-component-base';
 import { AuthService } from '@app/_services/auth.service';
 

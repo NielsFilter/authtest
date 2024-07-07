@@ -5,7 +5,7 @@ import {first} from 'rxjs/operators';
 
 import { AlertService } from '@app/_services';
 import { MustMatch } from '@app/_helpers';
-import { AccountsClient, ResetPasswordRequest } from 'src/shared/service-clients/service-clients';
+import { AuthClient, ResetPasswordRequest } from 'src/shared/service-clients/service-clients';
 
 enum TokenStatus {
     Validating,
@@ -26,7 +26,7 @@ export class ResetPasswordComponent implements OnInit {
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
         private router: Router,
-        private accountClient: AccountsClient,
+        private authClient: AuthClient,
         private alertService: AlertService
     ) { }
 
@@ -43,7 +43,7 @@ export class ResetPasswordComponent implements OnInit {
         // remove token from url to prevent http referer leakage
         this.router.navigate([], { relativeTo: this.route, replaceUrl: true });
 
-        this.accountClient.accountsValidateResetToken(token)
+        this.authClient.authValidateResetToken(token)
             .pipe(first())
             .subscribe({
                 next: () => {
@@ -76,7 +76,7 @@ export class ResetPasswordComponent implements OnInit {
         resetPasswordRequest.password = this.f.password.value;
         resetPasswordRequest.confirmPassword = this.f.confirmPassword.value;
 
-        this.accountClient.accountsResetPassword(resetPasswordRequest)
+        this.authClient.authResetPassword(resetPasswordRequest)
             .pipe(first())
             .subscribe({
                 next: () => {

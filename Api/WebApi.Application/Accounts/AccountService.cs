@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using System.Security.Cryptography;
 using WebApi.Accounts.Models;
 using WebApi.Authorization;
+using WebApi.Domain.Accounts;
 using WebApi.Entities;
 using WebApi.Helpers;
 using WebApi.Shared;
@@ -40,11 +41,12 @@ public class AuthService(
             throw new AppException("Email or password is incorrect");
         }
         
-        // fetch the account roles
+        // fetch the account roles and permissions
         var roles = await _accountRepository.GetAccountRoles(account.Id);
+        var permissions = GetAccountPermissions();
 
         // authentication successful so generate jwt and refresh tokens
-        var jwtToken = tokenAuthService.GenerateJwtToken(account, roles);
+        var jwtToken = tokenAuthService.GenerateJwtToken(account, roles, permissions);
         var refreshToken = await tokenAuthService.GenerateRefreshToken(ipAddress);
         
         var uow = repositoryFactory.CreateUnitOfWork();
@@ -57,6 +59,17 @@ public class AuthService(
         });
 
         return CreateAuthenticationResult(account, roles, jwtToken, refreshToken);
+    }
+
+    private static List<PermissionTypes> GetAccountPermissions()
+    {
+        //TODO: HARD CODED, THIS WILL NEED TO BE CONFIGURABLE
+        var permissions = new List<PermissionTypes>()
+        {
+            PermissionTypes.PermissionProfileView,
+            PermissionTypes.PermissionProfileUpdate
+        };
+        return permissions;
     }
 
     private AuthenticationResult CreateAuthenticationResult(Account account, List<Role> roles, string jwtToken,
@@ -104,7 +117,8 @@ public class AuthService(
             
             // generate new jwt
             var roles = await _accountRepository.GetAccountRoles(account.Id);
-            var jwtToken = tokenAuthService.GenerateJwtToken(account, roles);
+            var permissions = GetAccountPermissions();
+            var jwtToken = tokenAuthService.GenerateJwtToken(account, roles, permissions);
 
             // return data in authenticate response object
             return CreateAuthenticationResult(account, roles, jwtToken, newRefreshToken);

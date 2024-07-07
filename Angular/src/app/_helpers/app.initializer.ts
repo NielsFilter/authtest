@@ -1,7 +1,6 @@
 import { catchError, of } from 'rxjs';
-import { AccountsClient } from 'src/shared/service-clients/service-clients';
 
-export function appInitializer(accountClient: AccountsClient) {
+export function appInitializer() {
     return () => of();
         //TODO: 
         // accountClient.accountsRefreshToken()

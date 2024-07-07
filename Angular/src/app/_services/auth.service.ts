@@ -10,7 +10,7 @@ import {
 } from 'rxjs';
 import {
   AccountDto,
-  AccountsClient,
+  AuthClient,
   AuthenticateDto,
   AuthenticateRequest,
   AuthenticationResult,
@@ -28,56 +28,20 @@ export class AuthService {
 
   constructor(
     private router: Router,
-    private accountClient: AccountsClient,
+    private authClient: AuthClient,
     private storageService: StorageService
   ) {}
-
-  //TODO: 
-  // startRefreshTokenTimer() {
-  //   this.stopRefreshTokenTimer();
-  //   const authData = this.getStoredAuthResult();
-  //   if (authData?.authenticate == null) {
-  //     return;
-  //   }
-
-  //   // parse json object from base64 encoded jwt token
-  //   const jwtBase64 = authData.authenticate.jwtToken!.split('.')[1];
-  //   const jwtToken = JSON.parse(atob(jwtBase64));
-
-  //   // set a timeout to refresh the token a minute before it expires
-  //   const expires = new Date(jwtToken.exp * 1000);
-  //   const timeout = expires.getTime() - Date.now() - 10 * 1000; //TODO:
-
-  //   if (timeout <= 0) {
-  //     this.refreshToken()
-  //       .pipe(take(1))
-  //       .subscribe({
-  //         next: (res) => this.updateAuthDetails(res),
-  //       });
-  //   }
-
-  //   this.refreshTokenTimeout = setTimeout(
-  //     () =>
-  //       this.refreshToken()
-  //         .pipe(take(1))
-  //         .subscribe({
-  //           next: (res) => this.updateAuthDetails(res),
-  //         }),
-  //     timeout
-  //   );
-  // }
 
   autoLogin() {
     const authData = this.getStoredAuthResult()
     if (authData == null) {
       return;
     }
-   //tODO: this.startRefreshTokenTimer();
     this.setAuthResult(authData);
   }
 
   login(authRequest: AuthenticateRequest): Observable<AuthenticateDto> {
-    return this.accountClient.accountsAuthenticate(authRequest).pipe(
+    return this.authClient.authAuthenticate(authRequest).pipe(
       tap({
         next: (res) => this.updateAuthDetails(res),
       })
@@ -87,7 +51,6 @@ export class AuthService {
   private updateAuthDetails(res: AuthenticationResult) {
     this.storeAuthResult(res);
     this.setAuthResult(res);
-    //TODO: this.startRefreshTokenTimer();
   }
 
   private setAuthResult(res: AuthenticationResult | null) {
@@ -104,29 +67,20 @@ export class AuthService {
   clearData() {
     this.storageService.clean();
     this.setAuthResult(null);
-    this.stopRefreshTokenTimer();
   }
 
   updateAccountInfo(account: AccountDto) {
     this.account$.next(account);
   }
 
-  //todo:
-  private stopRefreshTokenTimer() {
-    if (this.refreshTokenTimeout) {
-      clearTimeout(this.refreshTokenTimeout);
-    }
-  }
-
   refreshToken(): Observable<AuthenticationResult> {
-    console.log('refreshing token');
     const authData = this.getStoredAuthResult();
     if (authData?.authenticate == null) {
       return EMPTY;
     }
 
-    return this.accountClient
-      .accountsRefreshToken(authData.authenticate.refreshToken)
+    return this.authClient
+      .authRefreshToken(authData.authenticate.refreshToken)
       .pipe(
         take(1),
         tap((res) => {

@@ -2,13 +2,11 @@
 
 import { AlertService } from '@app/_services';
 import { AppComponentBase } from 'src/shared/common/app-component-base';
-import { AccountDto, AccountsClient } from 'src/shared/service-clients/service-clients';
 
 @Component({ templateUrl: 'details.component.html' })
 export class DetailsComponent extends AppComponentBase {
     counter: number = 1;
     constructor(injector: Injector,
-        private accountClient: AccountsClient,
         private alertService: AlertService) { 
             super(injector);
         }

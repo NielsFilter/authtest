@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Accounts.Models;
 using WebApi.Authorization;
@@ -7,10 +8,13 @@ using WebApi.Services;
 
 namespace WebApi.Controllers;
 
-[Authorize(Role.Admin)]
+[Authorize(Roles = nameof(Role.Admin))]
 [ApiController]
 [Route($"{ApiVersioning.V1Admin}/profile")]
-public class AdminProfileController(IProfileService profileService) : BaseController
+public class AdminProfileController(
+    ITokenAuthService tokenAuthService,
+    IProfileService profileService)
+    : AuthenticatedController(tokenAuthService)
 {
     [HttpPost("search")]
     public async Task<ActionResult<IEnumerable<AccountDto>>> SearchAllPaged(FilterPagedDto input, CancellationToken cancellationToken = default)

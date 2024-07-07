@@ -1,5 +1,6 @@
-namespace WebApi.Authorization;
-
-[AttributeUsage(AttributeTargets.Method)]
-public class AllowAnonymousAttribute : Attribute
-{ }
+//TODO:  delete
+// namespace WebApi.Authorization;
+//
+// [AttributeUsage(AttributeTargets.Method)]
+// public class AllowAnonymousAttribute : Attribute
+// { }

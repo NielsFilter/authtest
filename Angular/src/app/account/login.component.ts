@@ -4,7 +4,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {first} from 'rxjs/operators';
 
 import { AlertService } from '@app/_services';
-import { AccountsClient, AuthenticateRequest } from 'src/shared/service-clients/service-clients';
+import { AuthenticateRequest } from 'src/shared/service-clients/service-clients';
 import { AuthService } from '@app/_services/auth.service';
 
 @Component({ templateUrl: 'login.component.html' })
@@ -17,7 +17,6 @@ export class LoginComponent implements OnInit {
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
         private router: Router,
-        private accountClient: AccountsClient,
         private alertService: AlertService,
         private authService: AuthService
     ) { }

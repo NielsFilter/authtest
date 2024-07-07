@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
-import { API_BASE_URL, AccountsClient, AdminProfileClient, NotificationClient, ProfileClient } from './service-clients';
+import { API_BASE_URL, AuthClient, AdminProfileClient, NotificationClient, ProfileClient } from './service-clients';
 import { environment } from '@environments/environment';
 
 @NgModule({
     providers: [
-        AccountsClient,
+        AuthClient,
         ProfileClient,
         AdminProfileClient,
         NotificationClient,

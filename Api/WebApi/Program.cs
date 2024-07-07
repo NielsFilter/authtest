@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -12,6 +13,7 @@ using WebApi;
 using WebApi.Authorization;
 using WebApi.Data.Profile;
 using WebApi.Domain;
+using WebApi.Domain.Accounts;
 using WebApi.Helpers;
 using WebApi.Infrastructure;
 using WebApi.Services;
@@ -56,15 +58,23 @@ var builder = WebApplication.CreateBuilder(args);
         {
             options.TokenValidationParameters = new TokenValidationParameters
             {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
+                ValidateIssuer = false,
+                ValidateAudience = false,
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = jwtSettings["validIssuer"],
-                ValidAudience = jwtSettings["validAudience"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["securityKey"]))
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["securityKey"])),
+                ValidateLifetime = true
             };
         });
+    
+    builder.Services.AddAuthorization(options =>
+    {
+        foreach(var permissionType in Enum.GetValues<PermissionTypes>()) 
+        {
+            // assuming .Permission is enum
+            options.AddPolicy(permissionType.ToString(),
+                policy => policy.Requirements.Add(new PermissionRequirement(permissionType)));
+        }
+    });
 
     // configure strongly typed settings object
     services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
@@ -109,8 +119,6 @@ using (var scope = app.Services.CreateScope())
     app.UseAuthentication();
     app.UseAuthorization();
 
-    // custom jwt auth middleware
-    app.UseMiddleware<JwtMiddleware>();
     
     app.MapHub<SignalrAppNotificationHub>("/Notify");
     app.MapControllers();

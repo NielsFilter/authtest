@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using WebApi.Authorization;
 using WebApi.Data.Profile;
 using WebApi.Helpers;
@@ -12,6 +13,7 @@ public abstract class DependencyInjection
     {
         services.AddScoped<IRepositoryFactory, RepositoryFactory>();
         
+        services.AddScoped<IAuthorizationHandler, PermissionHandler>();
         services.AddScoped<ITokenAuthService, TokenAuthService>();
         services.AddScoped<IAccountRepository, AccountRepository>();
         services.AddScoped<IAuthService, AuthService>();

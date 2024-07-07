@@ -3,7 +3,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {finalize, first} from 'rxjs/operators';
 
 import {AlertService} from '@app/_services';
-import { AccountsClient } from 'src/shared/service-clients/service-clients';
+import { AuthClient } from 'src/shared/service-clients/service-clients';
 
 @Component({ templateUrl: 'forgot-password.component.html' })
 export class ForgotPasswordComponent implements OnInit {
@@ -13,7 +13,7 @@ export class ForgotPasswordComponent implements OnInit {
 
     constructor(
         private formBuilder: FormBuilder,
-        private accountClient: AccountsClient,
+        private authClient: AuthClient,
         private alertService: AlertService
     ) { }
 
@@ -38,7 +38,7 @@ export class ForgotPasswordComponent implements OnInit {
         }
 
         this.loading = true;
-        this.accountClient.accountsForgotPassword(this.f.email.value)
+        this.authClient.authForgotPassword(this.f.email.value)
             .pipe(first())
             .pipe(finalize(() => this.loading = false))
             .subscribe({

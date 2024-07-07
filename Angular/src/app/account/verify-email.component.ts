@@ -3,7 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {first} from 'rxjs/operators';
 
 import {AlertService} from '@app/_services';
-import {AccountsClient } from 'src/shared/service-clients/service-clients';
+import {AuthClient } from 'src/shared/service-clients/service-clients';
 
 enum EmailStatus {
     Verifying,
@@ -18,7 +18,7 @@ export class VerifyEmailComponent implements OnInit {
     constructor(
         private route: ActivatedRoute,
         private router: Router,
-        private accountClient: AccountsClient,
+        private authClient: AuthClient,
         private alertService: AlertService
     ) { }
 
@@ -28,7 +28,7 @@ export class VerifyEmailComponent implements OnInit {
         // remove token from url to prevent http referer leakage
         this.router.navigate([], { relativeTo: this.route, replaceUrl: true });
 
-        this.accountClient.accountsVerifyEmail(token)
+        this.authClient.authVerifyEmail(token)
             .pipe(first())
             .subscribe({
                 next: () => {

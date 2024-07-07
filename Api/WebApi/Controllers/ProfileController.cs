@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Accounts.Models;
 using WebApi.Authorization;
@@ -9,7 +10,10 @@ namespace WebApi.Controllers;
 [Authorize]
 [ApiController]
 [Route($"{ApiVersioning.V1}/[controller]")]
-public class ProfileController(IProfileService profileService) : BaseController
+public class ProfileController(
+    ITokenAuthService tokenAuthService,
+    IProfileService profileService)
+    : AuthenticatedController(tokenAuthService)
 {
 
     [HttpGet("{id:int}")]

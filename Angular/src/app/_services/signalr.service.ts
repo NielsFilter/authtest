@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import * as signalR from "@microsoft/signalr"
 import { Observable } from 'rxjs';
-import { AccountsClient } from 'src/shared/service-clients/service-clients';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +11,7 @@ export class SignalrService {
 
   private hubConnection!: signalR.HubConnection;
 
-  constructor(private accountClient: AccountsClient) {
+  constructor() {
     //TODO: 
     // var token = accountService?.accountValue?.jwtToken;
     // if(!token) {

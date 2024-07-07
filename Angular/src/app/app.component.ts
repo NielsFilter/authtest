@@ -8,7 +8,6 @@
 
 import { Role } from './_models';
 import { SignalrService } from './_services/signalr.service';
-import { AccountsClient } from 'src/shared/service-clients/service-clients';
 import { AuthService } from './_services/auth.service';
 import { AppComponentBase } from 'src/shared/common/app-component-base';
 
@@ -23,7 +22,6 @@ export class AppComponent
 
   constructor(
     injector: Injector,
-    private accountsClient: AccountsClient,
     private signalrService: SignalrService,
     private authService: AuthService
   ) {
@@ -44,7 +42,6 @@ export class AppComponent
   }
 
   ngOnInit() {
-    console.log('app component init');
     this.authService.autoLogin();
   }
 

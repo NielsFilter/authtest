@@ -5,7 +5,7 @@ import {first} from 'rxjs/operators';
 
 import {AlertService} from '@app/_services';
 import {MustMatch} from '@app/_helpers';
-import { AccountsClient } from 'src/shared/service-clients/service-clients';
+import {AuthClient} from 'src/shared/service-clients/service-clients';
 
 @Component({ templateUrl: 'register.component.html' })
 export class RegisterComponent implements OnInit {
@@ -17,7 +17,7 @@ export class RegisterComponent implements OnInit {
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
         private router: Router,
-        private accountClient: AccountsClient,
+        private authClient: AuthClient,
         private alertService: AlertService
     ) { }
 
@@ -50,7 +50,7 @@ export class RegisterComponent implements OnInit {
         }
 
         this.submitting = true;
-        this.accountClient.accountsRegister(this.form.value)
+        this.authClient.authRegister(this.form.value)
             .pipe(first())
             .subscribe({
                 next: () => {

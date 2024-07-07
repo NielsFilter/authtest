@@ -1,6 +1,6 @@
 ﻿import {Component, OnInit} from '@angular/core';
 import {finalize, first} from 'rxjs/operators';
-import { AccountsClient, AdminProfileClient, FilterPagedDto, ProfileClient } from 'src/shared/service-clients/service-clients';
+import { AdminProfileClient, FilterPagedDto } from 'src/shared/service-clients/service-clients';
 import { Router, NavigationStart } from '@angular/router';
 
 @Component({ templateUrl: 'list.component.html' })

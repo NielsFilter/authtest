@@ -11,7 +11,7 @@ import { HomeComponent } from './home';
 import { ServiceClientModule } from 'src/shared/service-clients/service-client.module';
 import { environment } from '@environments/environment';
 import { CommonModule } from '@angular/common';
-import { AccountsClient } from 'src/shared/service-clients/service-clients';
+import { AuthClient } from 'src/shared/service-clients/service-clients';
 import { AppCommonModule } from 'src/shared/common/app-common.module';
 
 @NgModule({
@@ -31,7 +31,7 @@ import { AppCommonModule } from 'src/shared/common/app-common.module';
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
     providers: [
-        { provide: APP_INITIALIZER, useFactory: appInitializer, deps: [AccountsClient], multi: true },
+        { provide: APP_INITIALIZER, useFactory: appInitializer, deps: [AuthClient], multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
         //TODO: { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
     ],

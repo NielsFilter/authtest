@@ -1,4 +1,5 @@
 using System.Globalization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Accounts.Models;
 using WebApi.Authorization;
@@ -11,7 +12,9 @@ namespace WebApi.Controllers;
 [Authorize]
 [ApiController]
 [Route($"{ApiVersioning.V1}/[controller]")]
-public class NotificationController(INotificationService notificationService) : BaseController
+public class NotificationController(
+    ITokenAuthService tokenAuthService,
+    INotificationService notificationService) : AuthenticatedController(tokenAuthService)
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<NewAccountAppNotification>>> GetAll([FromQuery] PagedRequest request)

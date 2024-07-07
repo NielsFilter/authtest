@@ -10,14 +10,15 @@ using System.Text;
 using Entities;
 using Services;
 using Shared;
-
-public record TokenClaim(int AccountId, List<Role> Roles);
+using WebApi.Domain.Accounts;
 
 public interface ITokenAuthService
 {
-    string GenerateJwtToken(Account account, List<Role> roles);
-    TokenClaim? ValidateJwtToken(string? token);
+    string GenerateJwtToken(Account account, List<Role> roles, List<PermissionTypes> permissions);
     Task<RefreshToken> GenerateRefreshToken(string ipAddress);
+    List<PermissionTypes> GetPermissionClaims(ClaimsPrincipal user);
+    int? GetAccountId(ClaimsPrincipal user);
+    bool IsAccountAdmin(ClaimsPrincipal user);
 }
 
 public class TokenAuthService(
@@ -26,22 +27,20 @@ public class TokenAuthService(
     ILogger<TokenAuthService> logger) : ITokenAuthService
 {
     private const string TokenClaimAccountId = "accountId";
-    private const string TokenClaimAccountRoles = "accountRoles";
+    private const string TokenClaimAccountPermissions = "accountPermissions";
     
     private readonly AppSettings _appSettings = appSettings.Value;
 
-    public string GenerateJwtToken(Account account, List<Role> roles)
+    public string GenerateJwtToken(Account account, List<Role> roles, List<PermissionTypes> permissions)
     {
+        var claims = CreateAuthClaims(account, roles, permissions);
+
         // generate token that is valid for 15 minutes
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[]
-            {
-                new Claim(TokenClaimAccountId, account.Id.ToString()),
-                new Claim(TokenClaimAccountRoles, string.Join(",", roles)),
-            }),
+            Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddSeconds(20), //TODO: .AddMinutes(15),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
@@ -49,84 +48,21 @@ public class TokenAuthService(
         return tokenHandler.WriteToken(token);
     }
 
-    public TokenClaim? ValidateJwtToken(string? token)
+    private static List<Claim> CreateAuthClaims(Account account, List<Role> roles, List<PermissionTypes> permissions)
     {
-        if (token == null)
+        var claims = new List<Claim>
         {
-            return null;
+            new(TokenClaimAccountId, account.Id.ToString()),
+            //TODO: Consider multiple permissions instead of string concatenated list (like with roles below)
+            new(TokenClaimAccountPermissions, string.Join(",", permissions)),
+        };
+
+        foreach(var role in roles) 
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role.ToString()));
         }
 
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-        try
-        {
-            tokenHandler.ValidateToken(token, new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                // set clockskew to zero so tokens expire exactly at token expiration time (instead of 5 minutes later)
-                ClockSkew = TimeSpan.Zero
-            }, out SecurityToken validatedToken);
-
-            var claim = ReadTokenClaims(validatedToken);
-            // return account id from JWT token if validation successful
-            return claim ?? null;
-        }
-        catch
-        {
-            // return null if validation fails
-            return null;
-        }
-    }
-
-    /// <summary>
-    /// Read the claims from the JWT token and return parsed response
-    /// </summary>
-    private TokenClaim? ReadTokenClaims(SecurityToken validatedToken)
-    {
-        if(validatedToken is not JwtSecurityToken jwtToken)
-        {
-            logger.LogError("Security token is not a valid Jwt security token");
-            return null;
-        }
-        
-        var accountIdClaimStr = jwtToken.Claims.FirstOrDefault(x => x.Type == TokenClaimAccountId)?.Value;
-        if (accountIdClaimStr == null)
-        {
-            logger.LogError($"No '{TokenClaimAccountId}' claim found in Jwt token");
-            return null;
-        }
-
-        if (!int.TryParse(accountIdClaimStr, out var accountId) || accountId <= 0)
-        {
-            logger.LogError($"Invalid '{TokenClaimAccountId}' claim in Jwt token");    
-        }
-
-        var accountRolesClaimStr = jwtToken.Claims.FirstOrDefault(x => x.Type == TokenClaimAccountRoles)?.Value;
-        if(string.IsNullOrWhiteSpace(accountRolesClaimStr))
-        {
-            logger.LogError($"No '{TokenClaimAccountRoles}' claim found in Jwt token");
-            return null;
-        }
-        
-        var rolesSplit = accountRolesClaimStr.Split(',');
-        var roles = new List<Role>();
-        foreach (var role in rolesSplit)
-        {
-            if (Enum.TryParse<Role>(role, out var parsedRole))
-            {
-                roles.Add(parsedRole);
-            }
-            else
-            {
-                logger.LogError($"'{role}' is an invalid '{TokenClaimAccountRoles}' claim in Jwt token");    
-                return null;
-            }
-        }
-
-        return new TokenClaim(accountId, roles);
+        return claims;
     }
 
     public async Task<RefreshToken> GenerateRefreshToken(string ipAddress)
@@ -149,5 +85,45 @@ public class TokenAuthService(
         }
         
         return refreshToken;
+    }
+    
+    public int? GetAccountId(ClaimsPrincipal user)
+    {
+        string? accountIdStr = user.Claims.FirstOrDefault(c => c.Type == TokenClaimAccountId)?.Value;
+        if (string.IsNullOrWhiteSpace(accountIdStr) || !int.TryParse(accountIdStr, out var accountId))
+        {
+            return null;
+        }
+
+        return accountId;
+    }
+    
+    public bool IsAccountAdmin(ClaimsPrincipal user)
+    {
+        var isAdmin = user.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value == Role.Admin.ToString());
+        return isAdmin;
+    }
+
+    public List<PermissionTypes> GetPermissionClaims(ClaimsPrincipal user)
+    {
+        string? permissionsStr = null;
+        try
+        {
+            permissionsStr = user.Claims.FirstOrDefault(c => c.Type == TokenClaimAccountPermissions)?.Value;
+            if (string.IsNullOrWhiteSpace(permissionsStr))
+            {
+                return new List<PermissionTypes>();
+            }
+
+            return permissionsStr
+                .Split(",")
+                .Select(Enum.Parse<PermissionTypes>)
+                .ToList();
+        }
+        catch (Exception e)
+        {
+            logger.LogError($"Failed to parse permission claims '{permissionsStr}' from JWT token", e);
+            return new List<PermissionTypes>();
+        }
     }
 }

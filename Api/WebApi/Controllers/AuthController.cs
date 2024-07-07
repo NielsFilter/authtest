@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WebApi.Accounts.Models;
 using WebApi.Authorization;
 using WebApi.Services;
@@ -8,7 +9,10 @@ namespace WebApi.Controllers;
 [Authorize]
 [ApiController]
 [Route($"{ApiVersioning.V1}/[controller]")]
-public class AuthController(IAuthService authService) : BaseController
+public class AuthController(
+    ITokenAuthService tokenAuthService,
+    IAuthService authService)
+    : AuthenticatedController(tokenAuthService)
 {
     [AllowAnonymous]
     [HttpPost("authenticate")]
