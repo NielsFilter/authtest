@@ -5,7 +5,7 @@ import {first} from 'rxjs/operators';
 
 import {AlertService} from '@app/_services';
 import {MustMatch} from '@app/_helpers';
-import { AccountsClient } from 'src/shared/service-clients/service-clients';
+import {AdminProfileClient} from 'src/shared/service-clients/service-clients';
 
 @Component({ templateUrl: 'add-edit.component.html' })
 export class AddEditComponent implements OnInit {
@@ -20,7 +20,7 @@ export class AddEditComponent implements OnInit {
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
         private router: Router,
-        private accountClient: AccountsClient,
+        private adminProfileClient: AdminProfileClient,
         private alertService: AlertService
     ) { }
 
@@ -45,7 +45,7 @@ export class AddEditComponent implements OnInit {
             // edit mode
             this.title = 'Edit Account';
             this.loading = true;
-            this.accountClient.accountsGetById(this.id)
+            this.adminProfileClient.adminProfileGetById(this.id)
                 .pipe(first())
                 .subscribe(x => {
                     this.form.patchValue(x);
@@ -74,10 +74,10 @@ export class AddEditComponent implements OnInit {
         let saveAccount;
         let message: string;
         if (this.id) {
-            saveAccount = () => this.accountClient.accountsUpdate(this.id!, this.form.value);
+            saveAccount = () => this.adminProfileClient.adminProfileUpdate(this.id!, this.form.value);
             message = 'Account updated';
         } else {
-            saveAccount = () => this.accountClient.accountsCreate(this.form.value);
+            saveAccount = () => this.adminProfileClient.adminProfileCreate(this.form.value);
             message = 'Account created';
         }
 

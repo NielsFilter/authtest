@@ -11,7 +11,7 @@ public class AccountProfile : Profile
         CreateMap<RefreshToken, RefreshTokenDto>();
         CreateMap<Account, AccountDto>();
         CreateMap<RegisterRequest, Account>();
-        CreateMap<CreateRequest, Account>();
-        CreateMap<UpdateRequest, Account>();
+        CreateMap<ProfileCreateRequest, Account>();
+        CreateMap<ProfileUpdateRequest, Account>();
     }
 }

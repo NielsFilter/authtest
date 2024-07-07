@@ -3,7 +3,7 @@ namespace WebApi.Models.Accounts;
 using System.ComponentModel.DataAnnotations;
 using WebApi.Entities;
 
-public class CreateRequest
+public class ProfileCreateRequest
 {
     [Required]
     public string Title { get; set; }

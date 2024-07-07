@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using WebApi;
 using WebApi.Authorization;
 using WebApi.Data.Profile;
 using WebApi.Domain;
@@ -72,15 +73,7 @@ var builder = WebApplication.CreateBuilder(args);
     services.AddHttpContextAccessor();
     
     // configure DI for application services
-    services.AddScoped<ITokenAuthService, TokenAuthService>();
-    services.AddScoped<IAccountService, AccountService>();
-    services.AddScoped<IAccountRepository, AccountRepository>();
-    services.AddScoped<INotificationRepository, NotificationRepository>();
-    services.AddScoped<INotificationService, NotificationService>();
-    services.AddScoped<IEmailService, EmailService>();
-    services.AddScoped<IAppNotifier, SignalrAppNotifier>();
-    services.AddScoped<IRepositoryFactory, RepositoryFactory>();
-    services.AddSingleton<ILoggedInUserResolver, LoggedInUserResolver>();
+    DependencyInjection.AddServices(services);
 }
 
 var app = builder.Build();

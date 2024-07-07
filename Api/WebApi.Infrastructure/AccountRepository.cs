@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using WebApi.Domain.Profile;
 using WebApi.Entities;
+using WebApi.Infrastructure;
 using WebApi.Services;
 
 namespace WebApi.Helpers;
@@ -109,5 +110,19 @@ public class AccountRepository(DataContext context)
             .Where(x => x.AccountId == accountId)
             .Select(x => x.Role)
             .ToListAsync();
+    }
+
+    public async Task<List<Account>> SearchPaged(FilterPagedDto input, CancellationToken cancellationToken = default)
+    {
+        var sortBy = string.IsNullOrWhiteSpace(input.SortBy) ? nameof(Account.LastName) : input.SortBy;
+        
+        return await _context.Accounts
+            .WhereIf(!string.IsNullOrEmpty(input.Search), x =>
+                x.Email.Contains(input.Search!)
+                || (x.FirstName + " " + x.LastName).Contains(input.Search!))
+            .OrderBy(x => sortBy)
+            .Skip(input.Index)
+            .Take(input.PageSize)
+            .ToListAsync(cancellationToken);
     }
 }

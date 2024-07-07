@@ -1,4 +1,4 @@
-﻿import { NgModule, APP_INITIALIZER } from '@angular/core';
+﻿import { NgModule, APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -13,7 +13,6 @@ import { environment } from '@environments/environment';
 import { CommonModule } from '@angular/common';
 import { AccountsClient } from 'src/shared/service-clients/service-clients';
 import { AppCommonModule } from 'src/shared/common/app-common.module';
-import { TableModule } from 'primeng/table';
 
 @NgModule({
     imports: [
@@ -23,18 +22,18 @@ import { TableModule } from 'primeng/table';
         AppRoutingModule,
         ServiceClientModule,
         AppCommonModule,
-        FormsModule,
-        TableModule
+        FormsModule
     ],
     declarations: [
         AppComponent,
         AlertComponent,
         HomeComponent
     ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
     providers: [
         { provide: APP_INITIALIZER, useFactory: appInitializer, deps: [AccountsClient], multi: true },
-        { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-        { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
+        { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
+        //TODO: { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
     ],
     bootstrap: [AppComponent]
 })

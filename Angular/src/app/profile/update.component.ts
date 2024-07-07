@@ -5,7 +5,7 @@ import { first } from 'rxjs/operators';
 
 import { AlertService } from '@app/_services';
 import { MustMatch } from '@app/_helpers';
-import { AccountDto, AccountsClient, UpdateRequest } from 'src/shared/service-clients/service-clients';
+import { AccountDto, AccountsClient, ProfileClient, ProfileUpdateRequest } from 'src/shared/service-clients/service-clients';
 import { AppComponentBase } from 'src/shared/common/app-component-base';
 import { AuthService } from '@app/_services/auth.service';
 
@@ -20,7 +20,7 @@ export class UpdateComponent extends AppComponentBase implements OnInit {
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
         private router: Router,
-        private accountClient: AccountsClient,
+        private profileClient: ProfileClient,
         private alertService: AlertService,
         private authService: AuthService
     ) {
@@ -55,8 +55,8 @@ export class UpdateComponent extends AppComponentBase implements OnInit {
         }
 
         this.submitting = true;
-        let request : UpdateRequest = { ...this.form.value};
-        this.accountClient.accountsUpdate(this.account!.id!, request)
+        let request : ProfileUpdateRequest = { ...this.form.value};
+        this.profileClient.profileUpdate(this.account!.id!, request)
             .pipe(first())
             .subscribe({
                 next: (res) => {
@@ -74,7 +74,7 @@ export class UpdateComponent extends AppComponentBase implements OnInit {
     onDelete() {
         if (confirm('Are you sure?')) {
             this.deleting = true;
-            this.accountClient.accountsDelete(this.account!.id!)
+            this.profileClient.profileDelete(this.account!.id!)
                 .pipe(first())
                 .subscribe(() => {
                     this.alertService.success('Account deleted successfully');

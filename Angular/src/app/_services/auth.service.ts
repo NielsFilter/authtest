@@ -13,14 +13,16 @@ import {
   AccountsClient,
   AuthenticateDto,
   AuthenticateRequest,
-  AuthenticationResult
+  AuthenticationResult,
 } from 'src/shared/service-clients/service-clients';
 import { StorageService } from './storage.service';
 
+const AUTH_KEY = 'auth';
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-    account$: BehaviorSubject<AccountDto | null> = new BehaviorSubject<AccountDto | null>(null);
-    auth$: BehaviorSubject<AuthenticateDto | null> = new BehaviorSubject<AccountDto | null>(null);
+  account$: BehaviorSubject<AccountDto | null> = new BehaviorSubject<AccountDto | null>(null);
+  auth$: BehaviorSubject<AuthenticateDto | null> = new BehaviorSubject<AccountDto | null>(null);
 
   refreshTokenTimeout: NodeJS.Timeout;
 
@@ -30,46 +32,47 @@ export class AuthService {
     private storageService: StorageService
   ) {}
 
-  startRefreshTokenTimer() {
-    this.stopRefreshTokenTimer();
-    const authData = this.storageService.getAuth();
-    if (authData?.authenticate == null) {
-      return;
-    }
+  //TODO: 
+  // startRefreshTokenTimer() {
+  //   this.stopRefreshTokenTimer();
+  //   const authData = this.getStoredAuthResult();
+  //   if (authData?.authenticate == null) {
+  //     return;
+  //   }
 
-    // parse json object from base64 encoded jwt token
-    const jwtBase64 = authData.authenticate.jwtToken!.split('.')[1];
-    const jwtToken = JSON.parse(atob(jwtBase64));
+  //   // parse json object from base64 encoded jwt token
+  //   const jwtBase64 = authData.authenticate.jwtToken!.split('.')[1];
+  //   const jwtToken = JSON.parse(atob(jwtBase64));
 
-    // set a timeout to refresh the token a minute before it expires
-    const expires = new Date(jwtToken.exp * 1000);
-    const timeout = expires.getTime() - Date.now() - 10 * 1000; //TODO:
+  //   // set a timeout to refresh the token a minute before it expires
+  //   const expires = new Date(jwtToken.exp * 1000);
+  //   const timeout = expires.getTime() - Date.now() - 10 * 1000; //TODO:
 
-    if (timeout <= 0) {
-      this.refreshToken()
-        .pipe(take(1))
-        .subscribe({
-          next: (res) => this.updateAuthDetails(res),
-        });
-    }
+  //   if (timeout <= 0) {
+  //     this.refreshToken()
+  //       .pipe(take(1))
+  //       .subscribe({
+  //         next: (res) => this.updateAuthDetails(res),
+  //       });
+  //   }
 
-    this.refreshTokenTimeout = setTimeout(
-      () =>
-        this.refreshToken()
-          .pipe(take(1))
-          .subscribe({
-            next: (res) => this.updateAuthDetails(res),
-          }),
-      timeout
-    );
-  }
+  //   this.refreshTokenTimeout = setTimeout(
+  //     () =>
+  //       this.refreshToken()
+  //         .pipe(take(1))
+  //         .subscribe({
+  //           next: (res) => this.updateAuthDetails(res),
+  //         }),
+  //     timeout
+  //   );
+  // }
 
   autoLogin() {
-    const authData = this.storageService.getAuth();
+    const authData = this.getStoredAuthResult()
     if (authData == null) {
       return;
     }
-    this.startRefreshTokenTimer();
+   //tODO: this.startRefreshTokenTimer();
     this.setAuthResult(authData);
   }
 
@@ -82,9 +85,9 @@ export class AuthService {
   }
 
   private updateAuthDetails(res: AuthenticationResult) {
-    this.storageService.saveAuth(res);
+    this.storeAuthResult(res);
     this.setAuthResult(res);
-    this.startRefreshTokenTimer();
+    //TODO: this.startRefreshTokenTimer();
   }
 
   private setAuthResult(res: AuthenticationResult | null) {
@@ -94,6 +97,7 @@ export class AuthService {
 
   logout() {
     this.clearData();
+    console.error('logging out....');
     this.router.navigate(['/account/login']);
   }
 
@@ -114,17 +118,29 @@ export class AuthService {
     }
   }
 
-  refreshToken(): Observable<AuthenticateDto> {
-    const authData = this.storageService.getAuth();
+  refreshToken(): Observable<AuthenticationResult> {
+    console.log('refreshing token');
+    const authData = this.getStoredAuthResult();
     if (authData?.authenticate == null) {
       return EMPTY;
     }
 
-    return this.accountClient.accountsRefreshToken(authData.authenticate.refreshToken).pipe(
-      take(1),
-      tap((res) => {
-        this.setAuthResult(res);
-      })
-    );
+    return this.accountClient
+      .accountsRefreshToken(authData.authenticate.refreshToken)
+      .pipe(
+        take(1),
+        tap((res) => {
+          this.updateAuthDetails(res);
+          //todo: this.setAuthResult(res);
+        })
+      );
+  }
+
+  getStoredAuthResult(): AuthenticationResult | null {
+    return this.storageService.getItem<AuthenticationResult>(AUTH_KEY);
+  }
+  
+  private storeAuthResult(result: AuthenticationResult): void {
+    this.storageService.saveItem(AUTH_KEY, result);
   }
 }

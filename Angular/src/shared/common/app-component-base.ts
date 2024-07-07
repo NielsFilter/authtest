@@ -1,5 +1,4 @@
 import { Component, Injector, OnDestroy, OnInit } from "@angular/core";
-import { AppSessionService } from "./session/app-session.service";
 import { AccountDto, AccountSessionInfo, AuthenticateDto } from "../service-clients/service-clients";
 import { AuthService } from "@app/_services/auth.service";
 import { BehaviorSubject, Observable, Subscription } from "rxjs";

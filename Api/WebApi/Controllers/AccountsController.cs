@@ -1,12 +1,10 @@
-﻿using WebApi.Helpers;
+﻿using Microsoft.AspNetCore.Mvc;
+using WebApi.Authorization;
+using WebApi.Helpers;
+using WebApi.Models.Accounts;
+using WebApi.Services;
 
 namespace WebApi.Controllers;
-
-using Microsoft.AspNetCore.Mvc;
-using Authorization;
-using Entities;
-using Models.Accounts;
-using Services;
 
 [Authorize]
 [ApiController]
@@ -72,66 +70,6 @@ public class AccountsController(IAccountService accountService) : BaseController
         return Ok(new { message = "Password reset successful, you can now login" });
     }
 
-    [Authorize(Role.Admin)]
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<AccountDto>>> GetAll()
-    {
-        var accounts = await accountService.GetAll();
-        return Ok(accounts);
-    }
-
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<AccountDto>> GetById(int id)
-    {
-        // users can get their own account and admins can get any account
-        if (id != AccountId && !IsAccountAdmin)
-        {
-            return Unauthorized(new { message = "Unauthorized" });
-        }
-
-        var account = await accountService.GetById(id);
-        return Ok(account);
-    }
-
-    [Authorize(Role.Admin)]
-    [HttpPost]
-    public async Task<ActionResult<AccountDto>> Create(CreateRequest model)
-    {
-        var account = await accountService.Create(model);
-        return Ok(account);
-    }
-
-    [HttpPut("{id:int}")]
-    public async Task<ActionResult<AccountDto>> Update(int id, UpdateRequest model)
-    {
-        // users can update their own account and admins can update any account
-        if (id != AccountId && !IsAccountAdmin)
-        {
-            return Unauthorized(new { message = "Unauthorized" });
-        }
-
-        //TODO: 
-        // if (!IsAccountAdmin)
-        // {
-        //     // only admins can update role
-        //     model.Roles = new List<Role>();
-        // }
-
-        var account = await accountService.Update(id, model);
-        return Ok(account);
-    }
-
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        // users can delete their own account and admins can delete any account
-        if (id != AccountId && IsAccountAdmin)
-            return Unauthorized(new { message = "Unauthorized" });
-
-        await accountService.Delete(id);
-        return Ok(new { message = "Account deleted successfully" });
-    }
-
     // helper methods
 
     //TODO: 
@@ -152,32 +90,5 @@ public class AccountsController(IAccountService accountService) : BaseController
             return Request.Headers["X-Forwarded-For"];
         else
             return HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-    }
-
-    private async Task<AccountDto> GetLoggedInAccountOrThrow()
-    {
-        if (AccountId == null)
-        {
-            throw new AppException("Unauthorized"); //tODO: exceptions
-        }
-        
-        var account = await accountService.GetById(AccountId.Value);
-        if (account == null)
-        {
-            throw new AppException("Unauthorized"); //tODO: exceptions
-        }
-
-        return account;
-    }
-    
-    [HttpGet("session-info")]
-    public async Task<AccountSessionInfo> GetAccountSessionInfo()
-    {
-        var account = await accountService.GetById(AccountId!.Value);
-        if (account == null)
-        {
-            throw new AppException("Unauthorized"); //tODO: exceptions
-        }
-        return new AccountSessionInfo(account);
     }
 }

@@ -44,6 +44,7 @@ export class AppComponent
   }
 
   ngOnInit() {
+    console.log('app component init');
     this.authService.autoLogin();
   }
 

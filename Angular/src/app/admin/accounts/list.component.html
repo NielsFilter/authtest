@@ -22,15 +22,47 @@
             <th pSortableColumn="role" style="width:20%">
                 Roles <p-sortIcon field="role" />
             </th>
+            <th>
+                Actions
+            </th>
         </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-product>
+    <ng-template pTemplate="body" let-account>
         <tr>
-            <td>{{ product.title }}</td>
-            <td>{{ product.firstName }}</td>
-            <td>{{ product.lastName }}</td>
-            <td>{{ product.email }}</td>
-            <td>{{ product.role }}</td>
+            <td>{{ account.title }}</td>
+            <td>{{ account.firstName }}</td>
+            <td>{{ account.lastName }}</td>
+            <td>{{ account.email }}</td>
+            <td>{{ account.role }}</td>
+            <td>
+                <!-- <p-button 
+                pRipple 
+                icon="fa fa-pencil" 
+                class="mr-2" 
+                [rounded]="true" 
+                [outlined]="true" 
+                severity="success" 
+                (click)="editAccount(account.id)" /> -->
+                
+                <a (click)="editAccount(account.id)">
+                    <i class="fa fa-pencil"></i>
+                </a>
+                <a (click)="deleteAccount(account.id)">
+                    <i class="fa fa-trash"></i>
+                </a>
+            <!-- <p-button 
+                pRipple 
+                icon="fa fa-trash" 
+                severity="danger" 
+                [rounded]="true" 
+                [outlined]="true" 
+                (click)="deleteAccount(account.id)" /> -->
+                <!-- <a routerLink="edit/{{account.id}}" class="btn btn-sm btn-primary me-1">Edit</a> -->
+                <!-- <button (click)="deleteAccount(account.id)" class="btn btn-sm btn-danger btn-delete-account" [disabled]="account.isDeleting">
+                    <span *ngIf="account.isDeleting" class="spinner-border spinner-border-sm"></span>
+                    <span *ngIf="!account.isDeleting">Delete</span>
+                </button> -->
+            </td>
         </tr>
     </ng-template>    
     <ng-template pTemplate="emptymessage">
@@ -39,7 +71,6 @@
         </tr>
     </ng-template>
 </p-table>
-
 
 
 

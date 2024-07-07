@@ -9,10 +9,12 @@ import {RegisterComponent} from './register.component';
 import {VerifyEmailComponent} from './verify-email.component';
 import {ForgotPasswordComponent} from './forgot-password.component';
 import {ResetPasswordComponent} from './reset-password.component';
+import { AppCommonModule } from 'src/shared/common/app-common.module';
 
 @NgModule({
     imports: [
         CommonModule,
+        AppCommonModule,
         ReactiveFormsModule,
         AccountRoutingModule
     ],

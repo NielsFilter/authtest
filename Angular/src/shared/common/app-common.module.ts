@@ -1,10 +1,13 @@
 import { NgModule } from '@angular/core';
-import { AppSessionService } from './session/app-session.service';
 import { AppComponentBase } from './app-component-base';
+import { TableModule } from 'primeng/table';
 
 @NgModule({
+    imports: [
+        TableModule
+    ],
     providers: [
-        AppSessionService
+        TableModule
     ],
 })
 export class AppCommonModule {}

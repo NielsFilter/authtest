@@ -14,4 +14,5 @@ public interface IAccountRepository : IRepository<Account>
     Task RevokeToken(int accountId, string token, string ipAddress, string revokeReason);
     Task SetRoles(int accountId, List<Role> roles);
     Task<List<Role>> GetAccountRoles(int accountId);
+    Task<List<Account>> SearchPaged(FilterPagedDto input, CancellationToken cancellationToken = default);
 }

@@ -1,15 +1,13 @@
-namespace WebApi.Services;
-
-using Shared;
 using AutoMapper;
-using BCrypt.Net;
 using Microsoft.Extensions.Options;
 using System.Security.Cryptography;
-using Authorization;
-using Entities;
-using Helpers;
-using Models.Accounts;
+using WebApi.Authorization;
+using WebApi.Entities;
+using WebApi.Helpers;
+using WebApi.Models.Accounts;
+using WebApi.Shared;
 
+namespace WebApi.Services;
 public interface IAccountService
 {
     Task<AuthenticationResult> Authenticate(AuthenticateRequest model, string ipAddress);
@@ -19,11 +17,6 @@ public interface IAccountService
     Task ForgotPassword(ForgotPasswordRequest model, string origin);
     Task ValidateResetToken(ValidateResetTokenRequest model);
     Task ResetPassword(ResetPasswordRequest model);
-    Task<IEnumerable<AccountDto>> GetAll();
-    Task<AccountDto> GetById(int id);
-    Task<AccountDto> Create(CreateRequest model);
-    Task<AccountDto> Update(int id, UpdateRequest model);
-    Task Delete(int id);
 }
 
 public class AccountService(
@@ -42,7 +35,7 @@ public class AccountService(
         var account = await _accountRepository.GetByEmail(model.Email);
 
         // validate
-        if (account == null || !account.IsVerified || !BCrypt.Verify(model.Password, account.PasswordHash))
+        if (account == null || !account.IsVerified || !BCrypt.Net.BCrypt.Verify(model.Password, account.PasswordHash))
         {
             throw new AppException("Email or password is incorrect");
         }
@@ -139,7 +132,7 @@ public class AccountService(
         account.VerificationToken = await GenerateVerificationToken();
 
         // hash password
-        account.PasswordHash = BCrypt.HashPassword(model.Password);
+        account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
         // save account
         var uow = repositoryFactory.CreateUnitOfWork();
@@ -195,7 +188,7 @@ public class AccountService(
         var account = await GetAccountByValidResetToken(model.Token);
 
         // update password and remove reset token
-        account.PasswordHash = BCrypt.HashPassword(model.Password);
+        account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
         account.PasswordReset = DateTime.UtcNow;
         account.ResetToken = null;
         account.ResetTokenExpires = null;
@@ -203,87 +196,7 @@ public class AccountService(
         await _accountRepository.Update(account);
     }
 
-    public Task<IEnumerable<AccountDto>> GetAll()
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<AccountDto> GetById(int id)
-    {
-        var account = await GetAccountOrThrow(id);
-        return mapper.Map<AccountDto>(account);
-    }
-
-    public async Task<AccountDto> Create(CreateRequest model)
-    {
-        // validate
-        var existingAccount = await  _accountRepository.GetByEmail(model.Email);
-        if (existingAccount != null)
-        {
-            throw new AppException($"Email '{model.Email}' is already registered");
-        }
-
-        // map model to new account object
-        var account = mapper.Map<Account>(model);
-        account.CreatedDateTime = DateTime.UtcNow;
-        account.Verified = DateTime.UtcNow;
-
-        // hash password
-        account.PasswordHash = BCrypt.HashPassword(model.Password);
-
-        // save account
-        await _accountRepository.Update(account);
-        
-        return mapper.Map<AccountDto>(account);
-    }
-
-    public async Task<AccountDto> Update(int id, UpdateRequest model)
-    {
-        var account = await GetAccountOrThrow(id);
-
-        // validate
-        if (account.Email != model.Email)
-        {
-            var existing = await  _accountRepository.GetByEmail(model.Email);
-            if (existing != null)
-            {
-                throw new AppException($"Email '{model.Email}' is already registered");
-            }
-        }
-
-        //TODO: 
-        // // roles have been set, update them on the profile
-        // if (model.Roles.Count != 0)
-        // {
-        //     await _accountRepository.SetRoles(account.Id, model.Roles);
-        // }
-
-        // hash password if it was entered
-        if (!string.IsNullOrEmpty(model.Password))
-            account.PasswordHash = BCrypt.HashPassword(model.Password);
-
-        // copy model to account and save
-        mapper.Map(model, account);
-        account.Updated = DateTime.UtcNow;
-
-        await _accountRepository.Update(account);
-        
-        return mapper.Map<AccountDto>(account);
-    }
-
-    public async Task Delete(int id)
-    {
-        await  _accountRepository.Delete(id);
-    }
-
     // helper methods
-
-    private async Task<Account> GetAccountOrThrow(int id)
-    {
-        var account = await  _accountRepository.GetById(id);
-        if (account == null) throw new KeyNotFoundException("Account not found");
-        return account;
-    }
 
     private async Task<Account> GetAccountByRefreshToken(string token)
     {

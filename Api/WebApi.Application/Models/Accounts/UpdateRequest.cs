@@ -5,11 +5,10 @@ namespace WebApi.Models.Accounts;
 using System.ComponentModel.DataAnnotations;
 using WebApi.Entities;
 
-public class UpdateRequest
+public class ProfileUpdateRequest
 {
     private string? _password;
     private string? _confirmPassword;
-    private List<string> _roles;
     private string? _email;
     
     public string Title { get; set; }

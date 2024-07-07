@@ -8,19 +8,15 @@ const AUTH_KEY = 'auth';
 })
 export class StorageService {
 
-
-
-  constructor() { }
-
-
-  saveAuth(user : AuthenticationResult){
-    window.localStorage.removeItem(AUTH_KEY);
-    window.localStorage.setItem(AUTH_KEY, JSON.stringify(user));
+  saveItem<T>(key: string, value: T){
+    window.localStorage.removeItem(key);
+    window.localStorage.setItem(key, JSON.stringify(value));
   }
-  getAuth() : AuthenticationResult | null {
-    const user = window.localStorage.getItem(AUTH_KEY);
-    if (user) {
-      return JSON.parse(user);
+
+  getItem<T>(key: string) : T | null {
+     let value = window.localStorage.getItem(key);
+    if (value) {
+      return JSON.parse(value);
     }
     return null;
   }

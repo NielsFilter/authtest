@@ -6,10 +6,12 @@ import { ProfileRoutingModule } from './profile-routing.module';
 import { LayoutComponent } from './layout.component';
 import { DetailsComponent } from './details.component';
 import { UpdateComponent } from './update.component';
+import { AppCommonModule } from 'src/shared/common/app-common.module';
 
 @NgModule({
     imports: [
         CommonModule,
+        AppCommonModule,
         ReactiveFormsModule,
         ProfileRoutingModule
     ],

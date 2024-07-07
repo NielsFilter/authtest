@@ -1,7 +1,6 @@
 namespace WebApi.Services;
 
-public class FilterPagedDto
+public class FilterPagedDto : PagedDto
 {
-    public int PageSize { get; set; } = 10; 
-    public int Index { get; set; }
+    public string? Search { get; set; }
 }
