@@ -1,9 +1,9 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
+using WebApi.Accounts.Models;
 using WebApi.Authorization;
 using WebApi.Entities;
 using WebApi.Models;
-using WebApi.Models.Accounts;
 using WebApi.Services;
 
 namespace WebApi.Controllers;

@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using WebApi.Accounts.Models;
 using WebApi.Authorization;
 using WebApi.Data.Profile;
 using WebApi.Helpers;
-using WebApi.Models.Accounts;
 
 namespace WebApi.Controllers;
 

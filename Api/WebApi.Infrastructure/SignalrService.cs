@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.SignalR;
-using WebApi.Models.Accounts;
+using WebApi.Accounts.Models;
 using WebApi.Services;
 
 namespace WebApi.Helpers;

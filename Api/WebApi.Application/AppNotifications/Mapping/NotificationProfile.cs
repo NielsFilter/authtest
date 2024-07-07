@@ -1,6 +1,6 @@
 using AutoMapper;
+using WebApi.Accounts.Models;
 using WebApi.Entities;
-using WebApi.Models.Accounts;
 using WebApi.Services.AppNotifications.Dtos;
 
 namespace WebApi.Helpers.Mapping;

@@ -1,5 +1,4 @@
-using WebApi.Entities;
-using WebApi.Models.Accounts;
+using WebApi.Accounts.Models;
 
 namespace WebApi.Services;
 

@@ -14,7 +14,7 @@ public abstract class DependencyInjection
         
         services.AddScoped<ITokenAuthService, TokenAuthService>();
         services.AddScoped<IAccountRepository, AccountRepository>();
-        services.AddScoped<IAccountService, AccountService>();
+        services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IProfileService, ProfileService>();
         
         services.AddScoped<INotificationRepository, NotificationRepository>();

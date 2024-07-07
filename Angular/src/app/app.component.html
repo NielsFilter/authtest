@@ -30,9 +30,9 @@
           </a>
         </li>
 
-        <li class="sidebar-item">
-          <a class="sidebar-link" href="pages-sign-up.html">
-            <i class="fa-solid fa-user-plus"></i> <span class="align-middle">Sign Up</span>
+        <li class="sidebar-item" routerLink="/settings">
+          <a class="sidebar-link">
+            <i class="fa-solid fa-cog"></i> <span class="align-middle">Settings</span>
           </a>
         </li>
 
@@ -191,7 +191,7 @@
             <div class="dropdown-menu dropdown-menu-end" id="profileDropDown">
               <a class="dropdown-item" routerLink="/profile"> <i class="align-middle me-1 fa-regular fa-user"></i> Profile</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" routerLink="/"><i class="align-middle me-1 fa-solid fa-gear"></i> Settings & Privacy</a>
+              <a class="dropdown-item" routerLink="/settings"><i class="align-middle me-1 fa-solid fa-gear"></i> Settings & Privacy</a>
               <a class="dropdown-item" href="#"><i class="align-middle me-1 fa-regular fa-circle-question"></i> Help Center</a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" [routerLink]="" (click)="logout()"><i class="align-middle me-1 fa-solid fa-right-from-bracket"></i> Log out</a>

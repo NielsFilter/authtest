@@ -1,15 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
+using WebApi.Accounts.Models;
 using WebApi.Authorization;
 using WebApi.Data.Profile;
 using WebApi.Entities;
-using WebApi.Models.Accounts;
 using WebApi.Services;
 
 namespace WebApi.Controllers;
 
 [Authorize(Role.Admin)]
 [ApiController]
-[Route($"{ApiVersioning.V1Admin}/[controller]")]
+[Route($"{ApiVersioning.V1Admin}/profile")]
 public class AdminProfileController(IProfileService profileService) : BaseController
 {
     [HttpPost("search")]
