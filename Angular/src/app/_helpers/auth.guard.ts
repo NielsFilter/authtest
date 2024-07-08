@@ -26,7 +26,6 @@ export const AuthGuard: CanActivateFn = (route, state) => {
         return true;
       }
 
-      console.error('Not logged in');
       // not logged in so redirect to login page with the return url
       router.navigate(['/account/login'], {
         queryParams: { returnUrl: state.url },
@@ -34,7 +33,7 @@ export const AuthGuard: CanActivateFn = (route, state) => {
       return false;
     }),
     catchError((err) => {
-      console.error('Boom kicking out', err);
+      console.error('kicking out', err);
       router.navigate(['/account/login'], {
         queryParams: { returnUrl: state.url },
       });

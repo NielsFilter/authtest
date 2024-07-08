@@ -3,7 +3,11 @@ import {finalize, first} from 'rxjs/operators';
 import { AdminProfileClient, FilterPagedDto } from 'src/shared/service-clients/service-clients';
 import { Router, NavigationStart } from '@angular/router';
 
-@Component({ templateUrl: 'list.component.html' })
+@Component({
+    // TODO: selector: 'list-settings',
+    templateUrl: './list.component.html',
+    styleUrl: './list.component.less'
+})
 export class ListComponent implements OnInit {
     accounts: any[];
     loading: boolean = false;

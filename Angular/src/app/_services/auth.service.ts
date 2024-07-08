@@ -33,7 +33,7 @@ export class AuthService {
   ) {}
 
   autoLogin() {
-    const authData = this.getStoredAuthResult()
+    const authData = this.getStoredAuthResult();
     if (authData == null) {
       return;
     }
@@ -60,7 +60,6 @@ export class AuthService {
 
   logout() {
     this.clearData();
-    console.error('logging out....');
     this.router.navigate(['/account/login']);
   }
 

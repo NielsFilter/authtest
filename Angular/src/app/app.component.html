@@ -1,7 +1,7 @@
 ﻿<div class="app-container" [ngClass]="{ 'bg-light': account }">
 
-<div class="wrapper">
-  <nav id="sidebar" class="sidebar js-sidebar" [ngClass]="sideCollapsed ? 'collapse' : 'show'" *ngIf="account"> 
+<div class="app-wrapper">
+  <nav id="sidebar" class="sidebar" [ngClass]="sideCollapsed ? 'collapse' : 'show'" *ngIf="account"> 
     <div class="sidebar-content js-simplebar">
       <a class="sidebar-brand" href="index.html">
         <span class="align-middle">filteredcode</span>
@@ -61,11 +61,10 @@
     </div>
   </nav>
 
-  <div class="main d-flex flex-column">
-    
-    <nav class="navbar navbar-expand navbar-light navbar-bg" *ngIf="account">
-      <div class="sidebar-toggle js-sidebar-toggle" (click)="toggleSidebar()">
-        <i class="hamburger align-self-center"></i>
+  <div class="main">
+    <nav class="navbar navbar-expand navbar-bg" *ngIf="account">
+      <div class="sidebar-toggle" (click)="toggleSidebar()">
+        <i class="hamburger"></i>
       </div>
 
       <div class="navbar-collapse collapse">
@@ -180,7 +179,7 @@
             </div>
           </li>
           <li class="nav-item dropdown">
-            <a class="nav-icon dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown" data-bs-target="#profileDropDown">
+            <a class="nav-icon d-none d-inline-md dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown" data-bs-target="#profileDropDown">
               <i class="align-middle fa-solid fa-gear"></i>
             </a>
 

@@ -6,13 +6,10 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { JwtInterceptor, ErrorInterceptor, appInitializer } from './_helpers';
 import { AppComponent } from './app.component';
-import { AlertComponent } from './_components';
 import { HomeComponent } from './home';
 import { ServiceClientModule } from 'src/shared/service-clients/service-client.module';
-import { environment } from '@environments/environment';
-import { CommonModule } from '@angular/common';
 import { AuthClient } from 'src/shared/service-clients/service-clients';
-import { AppCommonModule } from 'src/shared/common/app-common.module';
+import { AppSharedModule } from 'src/shared/app-shared.module';
 
 @NgModule({
     imports: [
@@ -21,19 +18,18 @@ import { AppCommonModule } from 'src/shared/common/app-common.module';
         HttpClientModule,
         AppRoutingModule,
         ServiceClientModule,
-        AppCommonModule,
+        AppSharedModule,
         FormsModule
     ],
     declarations: [
         AppComponent,
-        AlertComponent,
         HomeComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
     providers: [
         { provide: APP_INITIALIZER, useFactory: appInitializer, deps: [AuthClient], multi: true },
-        { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
-        //TODO: { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
+        { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+        { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
     ],
     bootstrap: [AppComponent]
 })

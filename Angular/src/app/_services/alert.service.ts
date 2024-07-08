@@ -2,7 +2,25 @@
 import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
-import { Alert, AlertType } from '@app/_models';
+export class Alert {
+    id?: string;
+    message?: string;
+    type?: AlertType;
+    cssClass?: string
+    autoCloseDelay?: number;
+
+    constructor(init?: Partial<Alert>) {
+        Object.assign(this, init);
+    }
+}
+
+export enum AlertType {
+    Success,
+    Error,
+    Info,
+    Warning
+}
+
 
 @Injectable({ providedIn: 'root' })
 export class AlertService {
