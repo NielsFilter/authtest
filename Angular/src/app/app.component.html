@@ -1,4 +1,4 @@
-﻿<div class="app-container" data-bs-theme="dark" [ngClass]="{ 'bg-light': account }">
+﻿<div class="app-container">
 
 <div class="app-wrapper">
   <nav id="sidebar" class="sidebar" [ngClass]="sideCollapsed ? 'collapse' : 'show'" *ngIf="account"> 
@@ -87,7 +87,7 @@
                       <i class="text-danger fa-solid fa-circle-exclamation"></i>
                     </div>
                     <div class="col-10">
-                      <div class="text-dark">Update completed</div>
+                      <div>Update completed</div>
                       <div class="text-muted small mt-1">Restart server 12 to complete the update.</div>
                       <div class="text-muted small mt-1">30m ago</div>
                     </div>
@@ -99,7 +99,7 @@
                       <i class="text-warning fa-regular fa-bell"></i>
                     </div>
                     <div class="col-10">
-                      <div class="text-dark">Lorem ipsum</div>
+                      <div>Lorem ipsum</div>
                       <div class="text-muted small mt-1">Aliquam ex eros, imperdiet vulputate hendrerit et.</div>
                       <div class="text-muted small mt-1">2h ago</div>
                     </div>
@@ -130,7 +130,7 @@
                       <img src="assets/img/avatars/avatar-5.jpg" class="avatar img-fluid rounded-circle" alt="Vanessa Tucker">
                     </div>
                     <div class="col-10 ps-2">
-                      <div class="text-dark">Vanessa Tucker</div>
+                      <div>Vanessa Tucker</div>
                       <div class="text-muted small mt-1">Nam pretium turpis et arcu. Duis arcu tortor.</div>
                       <div class="text-muted small mt-1">15m ago</div>
                     </div>
@@ -142,7 +142,7 @@
                       <img src="assets/img/avatars/avatar-2.jpg" class="avatar img-fluid rounded-circle" alt="William Harris">
                     </div>
                     <div class="col-10 ps-2">
-                      <div class="text-dark">William Harris</div>
+                      <div>William Harris</div>
                       <div class="text-muted small mt-1">Curabitur ligula sapien euismod vitae.</div>
                       <div class="text-muted small mt-1">2h ago</div>
                     </div>
@@ -154,7 +154,7 @@
                       <img src="assets/img/avatars/avatar-4.jpg" class="avatar img-fluid rounded-circle" alt="Christina Mason">
                     </div>
                     <div class="col-10 ps-2">
-                      <div class="text-dark">Christina Mason</div>
+                      <div>Christina Mason</div>
                       <div class="text-muted small mt-1">Pellentesque auctor neque nec urna.</div>
                       <div class="text-muted small mt-1">4h ago</div>
                     </div>
@@ -166,7 +166,7 @@
                       <img src="assets/img/avatars/avatar-3.jpg" class="avatar img-fluid rounded-circle" alt="Sharon Lessman">
                     </div>
                     <div class="col-10 ps-2">
-                      <div class="text-dark">Sharon Lessman</div>
+                      <div>Sharon Lessman</div>
                       <div class="text-muted small mt-1">Aenean tellus metus, bibendum sed, posuere ac, mattis non.</div>
                       <div class="text-muted small mt-1">5h ago</div>
                     </div>
@@ -185,7 +185,7 @@
 
             <a class="nav-link dropdown-toggle d-inline-block" href="#" data-bs-toggle="dropdown"  data-bs-target="#profileDropDown">
               <img src="assets/img/avatars/avatar.jpg" class="avatar img-fluid rounded me-1" alt="{{account.firstName}} {{account.lastName}}" /> 
-              <span class="text-dark d-none d-sm-inline-block">{{account.firstName}} {{account.lastName}}</span> 
+              <span class="d-none d-sm-inline-block">{{account.firstName}} {{account.lastName}}</span> 
             </a>
             <div class="dropdown-menu dropdown-menu-end" id="profileDropDown">
               <a class="dropdown-item" routerLink="/profile"> <i class="align-middle me-1 fa-regular fa-user"></i> Profile</a>
