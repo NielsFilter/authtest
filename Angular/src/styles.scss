@@ -1,0 +1,87 @@
+//$background:  #040D12 !default;
+$background:    #040D12 !default;
+$primary:       #183D3D !default;
+$success:       #1cbb8c !default;
+$info:          #17a2b8 !default;
+$warning:       #fcb92c !default;
+$danger:        #dc3545 !default;
+
+@import '../node_modules/bootstrap/scss/bootstrap.scss';
+
+:root {
+    --accent1: #183D3D !important;
+    --accent2: #5C8374 !important;
+    --accent3: #93B1A6 !important;
+    --highlight: #20c997 !important;
+    --bs-dark: #040D12 !important;
+    --bs-gray-100: #f8f9fa !important;
+    --bs-gray-200: #e9ecef !important;
+    --bs-gray-300: #dee2e6 !important;
+    --bs-gray-400: #ced4da !important;
+    --bs-gray-500: #adb5bd !important;
+    --bs-gray-600: #6c757d !important;
+    --bs-gray-700: #495057 !important;
+    --bs-gray-800: #343a40 !important;
+    --bs-gray-900: #212529 !important;
+    --bg-primary: #bac9c4 !important;
+    --bg-secondary: #eaf9f4 !important;
+    --text-on-primary: #e9ecef !important;
+}
+
+[data-bs-theme="dark"] {
+    --accent1: #183D3D !important;
+    --accent2: #5C8374 !important;
+    --accent3: #93B1A6 !important;
+    --bs-gray-100: #212529 !important;
+    --bs-gray-200: #343a40 !important;
+    --bs-gray-300: #495057 !important;
+    --bs-gray-400: #6c757d !important;
+    --bs-gray-500: #adb5bd !important;
+    --bs-gray-600: #ced4da !important;
+    --bs-gray-700: #dee2e6 !important;
+    --bs-gray-800: #e9ecef !important;
+    --bs-gray-900: #f8f9fa !important;
+    --bg-primary: #040D12 !important;
+    --bg-secondary: #151a1c !important;
+    --text-on-primary: #e9ecef !important;
+    --bs-body-bg: #151a1c !important;
+}
+
+
+  body {
+    color-scheme: light dark;
+  }
+    
+  .avatar {
+    height: 40px;
+    width: 40px
+  }
+  
+  .navbar-nav .dropdown-menu {
+    box-shadow: 0 .1rem .2rem rgba(0, 0, 0, .05)
+  }
+  
+  //  Footer 
+  footer {
+    background: var(--bg-primary);
+    direction: ltr;
+    padding: 1rem .875rem
+  }
+  
+  footer ul {
+    margin-bottom: 0
+  }
+  
+  @media (max-width: 767.98px) {
+    footer {
+      width: 100vw
+    }
+  }
+  
+  
+  .app-wrapper {
+    align-items: stretch;
+    background: var(--bs-body-bg);
+    display: flex;
+    width: 100%;
+  }

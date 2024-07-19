@@ -10,17 +10,19 @@ import { HomeComponent } from './home';
 import { ServiceClientModule } from 'src/shared/service-clients/service-client.module';
 import { AuthClient } from 'src/shared/service-clients/service-clients';
 import { AppSharedModule } from 'src/shared/app-shared.module';
+import { FooterComponent } from "./footer/footer.component";
 
 @NgModule({
     imports: [
-        BrowserModule,
-        ReactiveFormsModule,
-        HttpClientModule,
-        AppRoutingModule,
-        ServiceClientModule,
-        AppSharedModule,
-        FormsModule
-    ],
+    BrowserModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    AppRoutingModule,
+    ServiceClientModule,
+    AppSharedModule,
+    FormsModule,
+    FooterComponent
+],
     declarations: [
         AppComponent,
         HomeComponent

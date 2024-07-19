@@ -11,7 +11,11 @@ import { SignalrService } from './_services/signalr.service';
 import { AuthService } from './_services/auth.service';
 import { AppComponentBase } from 'src/shared/common/app-component-base';
 
-@Component({ selector: 'app-root', templateUrl: 'app.component.html' })
+@Component({
+  selector: 'app-root',
+  templateUrl: 'app.component.html',
+styleUrl: 'app.component.scss'
+ })
 export class AppComponent
   extends AppComponentBase
   implements AfterViewInit, OnInit

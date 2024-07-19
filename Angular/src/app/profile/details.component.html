@@ -14,6 +14,22 @@
                     <button (click)="showError()" class="btn btn-danger">Error</button>
                 </div>
             </div>
+            <div class="card">
+
+                <div class="d-flex justify-content-center">
+                    <div data-mdb-ripple-init class="btn btn-primary btn-rounded">
+                        <label class="form-label text-white m-1" for="customFile2">Choose file</label>
+
+                        <!-- <input type='file' (change)="imgFileSelected($event);" />
+                        <img id="blah" [src]="imageSrc" alt="your image" /> -->
+
+
+                        <input #file type="file" accept='image/*' (change)="preview(file.files)" />
+<img [src]="imgURL" height="200" />
+                        <!-- <input type="file" class="form-control d-none" id="customFile2" onchange="displaySelectedImage(event, 'selectedAvatar')" /> -->
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
