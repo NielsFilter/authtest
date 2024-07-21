@@ -1,7 +1,6 @@
-﻿<div class="app-container">
-
+﻿<div class="app-container" *ngIf="account" [attr.data-bs-theme]="darkTheme">
 <div class="app-wrapper">
-  <nav id="sidebar" class="sidebar" *ngIf="account && !sideCollapsed"> 
+  <nav id="sidebar" class="sidebar" *ngIf="!sideCollapsed"> 
     <div class="sidebar-content js-simplebar">
       
       <div class="d-flex justify-content-between align-items-center pe-3">
@@ -14,32 +13,32 @@
       </div>
     </div>
 
-      <ul class="sidebar-nav">
+      <ul class="sidebar-nav" (click)="menuClicked()">
         <li class="sidebar-header">
           Pages
         </li>
 
-        <li class="sidebar-item" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <li class="sidebar-item" routerLink="/app/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
           <a class="sidebar-link">
             <i class="fa-solid fa-sliders"></i> <span class="align-middle">Dashboard</span>
           </a>
         </li>
 
-        <li class="sidebar-item" routerLink="/profile" routerLinkActive="active">
+        <li class="sidebar-item" routerLink="/app/profile" routerLinkActive="active">
           <a class="sidebar-link">
             <i class="fa-regular fa-user"></i> <span class="align-middle">Profile</span>
           </a>
         </li>
 
-        <li class="sidebar-item" routerLink="/admin" routerLinkActive="active">
+        <li class="sidebar-item" routerLink="/app/admin" routerLinkActive="active">
           <a class="sidebar-link" *ngIf="isAdmin">
             <i class="fa-solid fa-book"></i> <span class="align-middle">Admin</span>
           </a>
         </li>
 
-        <li class="sidebar-item" routerLink="/settings">
+        <li class="sidebar-item" routerLink="/app/profile/settings">
           <a class="sidebar-link">
-            <i class="fa-solid fa-cog"></i> <span class="align-middle">Settings</span>
+            <i class="fa-solid fa-cog"></i> <span class="align-middle">Preferences</span>
           </a>
         </li>
 
@@ -57,10 +56,10 @@
   </nav>
 
   <div class="main">
-    <nav class="navbar navbar-expand navbar-bg" *ngIf="account">
-      <div class="sidebar-toggle" (click)="toggleSidebar()" *ngIf="sideCollapsed">
-        <i class="hamburger"></i>
-      </div>
+    <nav class="navbar navbar-expand navbar-bg">
+      <div >
+      <i class="fa-solid fa-lg fa-bars-staggered" role="button" (click)="toggleSidebar()" *ngIf="sideCollapsed"></i>
+    </div>
 
       <div class="navbar-collapse collapse">
         <ul class="navbar-nav navbar-align">
@@ -179,14 +178,14 @@
             </a>
 
             <a class="nav-link dropdown-toggle d-inline-block" href="#" data-bs-toggle="dropdown"  data-bs-target="#profileDropDown">
-              <img src="assets/img/avatars/avatar.jpg" class="avatar img-fluid rounded me-1" alt="{{account.firstName}} {{account.lastName}}" /> 
-              <span class="d-none d-sm-inline-block">{{account.firstName}} {{account.lastName}}</span> 
+              <img src="assets/img/avatars/avatar.jpg" class="avatar img-fluid rounded me-1" alt="{{account!.firstName}} {{account!.lastName}}" /> 
+              <span class="d-none d-sm-inline-block">{{account!.firstName}} {{account!.lastName}}</span> 
             </a>
             <div class="dropdown-menu dropdown-menu-end" id="profileDropDown">
-              <a class="dropdown-item" routerLink="/profile"> <i class="align-middle me-1 fa-regular fa-user"></i> Profile</a>
+              <a class="dropdown-item" routerLink="/app/profile"> <i class="align-middle me-1 fa-regular fa-user"></i> Profile</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" routerLink="/settings"><i class="align-middle me-1 fa-solid fa-gear"></i> Settings & Privacy</a>
-              <a class="dropdown-item" href="#"><i class="align-middle me-1 fa-regular fa-circle-question"></i> Help Center</a>
+              <a class="dropdown-item" routerLink="/profile/settings"><i class="align-middle me-1 fa-solid fa-gear"></i>Preferences</a>
+              <a class="dropdown-item" routerLink="/profile/settings"><i class="align-middle me-1 fa-solid fa-lock"></i>Security</a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" [routerLink]="" (click)="logout()"><i class="align-middle me-1 fa-solid fa-right-from-bracket"></i> Log out</a>
             </div>

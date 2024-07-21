@@ -7,8 +7,8 @@ import {AlertService} from '@app/_services';
 import {MustMatch} from '@app/_helpers';
 import {AdminProfileClient} from 'src/shared/service-clients/service-clients';
 
-@Component({ templateUrl: 'add-edit.component.html' })
-export class AddEditComponent implements OnInit {
+@Component({ templateUrl: 'admin-account-edit.component.html' })
+export class AdminAccountEditComponent implements OnInit {
     form!: FormGroup;
     id?: number;
     title!: string;

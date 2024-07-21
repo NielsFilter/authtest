@@ -1,9 +1,7 @@
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using WebApi.Data.Profile;
 using WebApi.Domain.Profile;
-using WebApi.Infrastructure;
+using WebApi.Domain.Settings;
 
 namespace WebApi.Helpers;
 
@@ -13,6 +11,7 @@ using WebApi.Entities;
 public class DataContext : DbContext
 {
     public DbSet<Account> Accounts { get; set; }
+    public DbSet<ProfileSetting> ProfileSettings { get; set; }
     public DbSet<AccountRole> AccountRoles { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<Notification> Notifications { get; set; }
@@ -97,5 +96,25 @@ public class DataContext : DbContext
             .WithMany()
             .HasForeignKey(n => n.DeletedById)
             .OnDelete(DeleteBehavior.NoAction);
+        
+        modelBuilder.Entity<ProfileSetting>()
+            .HasOne(ps => ps.Account)
+            .WithOne(a => a.Settings)
+            .OnDelete(DeleteBehavior.NoAction)
+            .HasForeignKey<ProfileSetting>(e => e.Id)
+            //.IsRequired()
+            .OnDelete(DeleteBehavior.NoAction);
+        
+        modelBuilder.Entity<ProfileSetting>()
+            // .HasOne(ps => ps.Account)
+            // .WithOne(a => a.Settings)
+            // .HasForeignKey<ProfileSetting>(e => e.Id)
+            //
+            .HasOne(ps => ps.Account)
+            .WithOne(a => a.Settings)
+            .OnDelete(DeleteBehavior.Restrict);
+            
+            // //.IsRequired()
+            // .OnDelete(DeleteBehavior.NoAction);
     }
 }

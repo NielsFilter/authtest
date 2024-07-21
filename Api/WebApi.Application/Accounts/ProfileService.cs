@@ -1,5 +1,8 @@
 using AutoMapper;
 using WebApi.Accounts.Models;
+using WebApi.Data.Accounts.Models;
+using WebApi.Data.Settings.Models;
+using WebApi.Domain.Settings;
 using WebApi.Entities;
 using WebApi.Helpers;
 using WebApi.Services;
@@ -11,9 +14,13 @@ public interface IProfileService
     Task<AccountDto> GetById(int id);
     Task<AccountDto> Create(ProfileCreateRequest model);
     Task<AccountDto> Update(int id, ProfileUpdateRequest model);
+    Task<AccountDto> UpdatePersonal(ProfilePersonalUpdateRequest input);
+    Task UpdateSecurity(ProfileSecurityUpdateRequest input);
     Task<AccountDto> UpdateWithRoles(int id, ProfileUpdateRequest model, List<Role> role);
     Task Delete(int id);
+    Task<ProfileSettingResult> GetProfileSettings(int id);
     Task<IEnumerable<AccountDto>> ListAllPaged(FilterPagedDto input, CancellationToken cancellationToken = default);
+    Task SetDarkMode(UpdateDarkModeSettingRequest request);
 }
 
 public class ProfileService(
@@ -21,11 +28,39 @@ public class ProfileService(
     IMapper mapper) : IProfileService
 {
     private readonly IAccountRepository _accountRepository = repositoryFactory.CreateAccountRepository();
+    private readonly IProfileSettingRepository _profileSettingRepository = repositoryFactory.CreateSettingRepository();
+
+    public async Task<ProfileSettingResult> GetProfileSettings(int id)
+    {
+        var profileSettings = await _profileSettingRepository.GetById(id);
+        var result = mapper.Map<ProfileSettingResult>(profileSettings);
+
+        return result ?? new ProfileSettingResult();
+    }
 
     public async Task<IEnumerable<AccountDto>> ListAllPaged(FilterPagedDto input, CancellationToken cancellationToken = default)
     {
         var accounts = await _accountRepository.SearchPaged(input, cancellationToken);
         return mapper.Map<IEnumerable<AccountDto>>(accounts);
+    }
+
+    public async Task SetDarkMode(UpdateDarkModeSettingRequest request)
+    {
+        var settings = await _profileSettingRepository.GetById(request.AccountId);
+        if (settings == null)
+        {
+            settings = new ProfileSetting {Id  = request.AccountId, IsDarkMode = request.IsDarkMode};
+            await _profileSettingRepository.Insert(settings);
+            return;
+        }
+
+        if (settings.IsDarkMode == request.IsDarkMode)
+        {
+            return;
+        }
+        
+        settings.IsDarkMode = request.IsDarkMode;
+        await _profileSettingRepository.Update(settings);
     }
 
     public async Task<AccountDto> GetById(int id)
@@ -56,7 +91,14 @@ public class ProfileService(
         
         return await MapAccountDto(account);
     }
-    
+
+    public async Task UpdateSecurity(ProfileSecurityUpdateRequest input)
+    {
+        var account = await GetAccountOrThrow(input.AccountId);
+        account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(input.Password);
+        await _accountRepository.Update(account);
+    }
+
     public async Task<AccountDto> UpdateWithRoles(int id, ProfileUpdateRequest model, List<Role> roles)
     {
         var account = await UpdateProfileInfo(id, model);
@@ -76,13 +118,51 @@ public class ProfileService(
         return await MapAccountDto(account);
     }
 
+    public async Task<AccountDto> UpdatePersonal(ProfilePersonalUpdateRequest input)
+    {
+        var account = await GetAccountOrThrow(input.AccountId);
+        account.Title = input.Title;
+        account.FirstName = input.FirstName;
+        account.LastName = input.LastName;
+        await _accountRepository.Update(account);
+        return await MapAccountDto(account);
+    }
+
+    public async Task<AccountDto> UpdatePersonal(int id, ProfilePersonalUpdateRequest model)
+    {
+        var account = await UpdatePersonalProfileInfo(id, model);
+        return await MapAccountDto(account);
+    }
+    
     private async Task<AccountDto> MapAccountDto(Account account)
     {
-        //TODO: Return a different type for profile. Account is too tighly linked to authentication
+        //TODO: Return a different type for profile. Account is too tightly linked to authentication
         var roles = await _accountRepository.GetAccountRoles(account.Id);
         var accountDto = mapper.Map<AccountDto>(account);
         accountDto.Roles = roles.Select(x => x.ToString()).ToList();
         return accountDto;
+    }
+    
+    private async Task<Account> UpdatePersonalProfileInfo(int id, ProfilePersonalUpdateRequest input)
+    {
+        var account = await GetAccountOrThrow(id);
+
+        // validate
+        if (account.Email != input.Email)
+        {
+            var existing = await  _accountRepository.GetByEmail(input.Email);
+            if (existing != null)
+            {
+                throw new AppException($"Email '{input.Email}' is already registered");
+            }
+        }
+
+        // copy model to account and save
+        mapper.Map(input, account);
+        account.Updated = DateTime.UtcNow;
+
+        await _accountRepository.Update(account);
+        return account;
     }
 
     private async Task<Account> UpdateProfileInfo(int id, ProfileUpdateRequest model)
@@ -121,5 +201,11 @@ public class ProfileService(
         var account = await  _accountRepository.GetById(id);
         if (account == null) throw new KeyNotFoundException("Account not found");
         return account;
+    }
+    
+    public async Task<ProfileSettingResult> GetSettings(int accountId)
+    {
+        var accountSetting = await _profileSettingRepository.GetById(accountId);
+        return mapper.Map<ProfileSettingResult>(accountSetting);
     }
 }

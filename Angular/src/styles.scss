@@ -23,6 +23,8 @@ $danger:        #dc3545 !default;
     --bs-gray-700: #495057 !important;
     --bs-gray-800: #343a40 !important;
     --bs-gray-900: #212529 !important;
+    --bs-body-color: #212529 !important;
+    --bs-heading-color: #212529 !important;
     --bg-primary: #bac9c4 !important;
     --bg-secondary: #eaf9f4 !important;
     --text-on-primary: #e9ecef !important;
@@ -41,15 +43,17 @@ $danger:        #dc3545 !default;
     --bs-gray-700: #dee2e6 !important;
     --bs-gray-800: #e9ecef !important;
     --bs-gray-900: #f8f9fa !important;
+    --bs-body-color: #e9ecef !important;
+    --bs-heading-color: #e9ecef !important;
     --bg-primary: #040D12 !important;
     --bg-secondary: #151a1c !important;
     --text-on-primary: #e9ecef !important;
-    --bs-body-bg: #151a1c !important;
 }
 
 
   body {
     color-scheme: light dark;
+    color: var(--text-on-primary);
   }
     
   .avatar {
@@ -85,3 +89,46 @@ $danger:        #dc3545 !default;
     display: flex;
     width: 100%;
   }
+
+
+
+@mixin switch($res: 'sm') {
+    $index: 1rem;
+    $mainVal: 1rem;
+  
+    @if $res == 'md' {
+        $index: 2rem;
+        $mainVal: 1.5rem;
+    } @else if $res == 'lg' {
+        $index: 3rem;
+        $mainVal: 2rem;
+    } @else if $res == 'xl' {
+        $index: 4rem;
+        $mainVal: 2.5rem;
+    }
+
+    margin-bottom: $index / 2; /* JUST FOR STYLING PURPOSE */
+
+    .form-check-input {
+        height: $mainVal;
+        width: calc(#{$index} + 0.75rem);
+        border-radius: $mainVal * 2;
+    }
+}
+
+
+.form-switch.form-switch-sm {
+  @include switch();
+}
+
+.form-switch.form-switch-md {
+  @include switch('md');
+}
+
+.form-switch.form-switch-lg {
+  @include switch('lg');
+}
+
+.form-switch.form-switch-xl {
+  @include switch('xl');
+}

@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Accounts.Models;
 using WebApi.Authorization;
+using WebApi.Data.Accounts.Models;
 using WebApi.Data.Profile;
+using WebApi.Data.Settings.Models;
 using WebApi.Helpers;
 
 namespace WebApi.Controllers;
@@ -28,6 +30,32 @@ public class ProfileController(
         var account = await profileService.GetById(id);
         return Ok(account);
     }
+    
+    [HttpPut("personal")]
+    public async Task<ActionResult<AccountDto>> UpdatePersonal(ProfilePersonalUpdateRequest input)
+    {
+        // users can get their own account and admins can get any account
+        if (input.AccountId != AccountId)
+        {
+            return Unauthorized(new { message = "Unauthorized" });
+        }
+        
+        var account = await profileService.UpdatePersonal(input);
+        return Ok(account);
+    }
+    
+    [HttpPut("security")]
+    public async Task<ActionResult> UpdateSecurity(ProfileSecurityUpdateRequest input)
+    {
+        // users can get their own account and admins can get any account
+        if (input.AccountId != AccountId)
+        {
+            return Unauthorized(new { message = "Unauthorized" });
+        }
+        
+        await profileService.UpdateSecurity(input);
+        return Ok();
+    }
 
     [HttpPut("{id:int}")]
     public async Task<ActionResult<AccountDto>> Update(int id, ProfileUpdateRequest model)
@@ -48,6 +76,19 @@ public class ProfileController(
         var account = await profileService.Update(id, model);
         return Ok(account);
     }
+    
+    [HttpPut("dark-mode")]
+    public async Task<ActionResult> UpdateDarkMode(bool isDarkMode)
+    {
+        var request = new UpdateDarkModeSettingRequest
+        {
+            AccountId = AccountId!.Value,
+            IsDarkMode = isDarkMode
+        };
+        await profileService.SetDarkMode(request);
+        return Ok();
+    }
+
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
@@ -89,5 +130,17 @@ public class ProfileController(
             throw new AppException("Unauthorized"); //tODO: exceptions
         }
         return new AccountSessionInfo(account);
+    }
+    
+    [HttpGet("settings")]
+    public async Task<ProfileSettingResult> GetAccountSettings()
+    {
+        var profileSettings = await profileService.GetProfileSettings(AccountId!.Value);
+        if (profileSettings == null)
+        {
+            throw new AppException("Unauthorized"); //tODO: exceptions
+        }
+
+        return profileSettings;
     }
 }

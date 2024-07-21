@@ -26,8 +26,12 @@ export class JwtInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(
       catchError((error) => {
+        console.warn('catchError', error);
+        console.warn('error.status', error.status);
+        console.warn('accessToken', accessToken);
         // Check if the error is due to an expired access token
         if (error.status === 401 && accessToken) {
+          console.warn('handle token expired');
           return this.handleTokenExpired(request, next);
         }
         this.authService.logout();
@@ -59,6 +63,7 @@ export class JwtInterceptor implements HttpInterceptor {
     // Call the refresh token endpoint to get a new access token
     return this.authService.refreshToken().pipe(
       switchMap((res) => {
+        console.warn('refreshToken result', res);
         const newAccessToken = res.authenticate?.jwtToken;
         if (!newAccessToken) {
           return throwError(() => new Error('Unable to refresh token'));

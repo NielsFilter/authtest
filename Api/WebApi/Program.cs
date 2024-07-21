@@ -124,4 +124,4 @@ using (var scope = app.Services.CreateScope())
     app.MapControllers();
 }
 
-app.Run("https://localhost:58914");
+app.Run();

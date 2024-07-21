@@ -1072,6 +1072,169 @@ export class ProfileClient {
     }
 
     /**
+     * @param body (optional) 
+     * @return OK
+     */
+    profileUpdatePersonal(body: ProfilePersonalUpdateRequest | undefined): Observable<AccountDto> {
+        let url_ = this.baseUrl + "/api/v1/Profile/personal";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            withCredentials: true,
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processProfileUpdatePersonal(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processProfileUpdatePersonal(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<AccountDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<AccountDto>;
+        }));
+    }
+
+    protected processProfileUpdatePersonal(response: HttpResponseBase): Observable<AccountDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = AccountDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    profileUpdateSecurity(body: ProfileSecurityUpdateRequest | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/v1/Profile/security";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            withCredentials: true,
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processProfileUpdateSecurity(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processProfileUpdateSecurity(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processProfileUpdateSecurity(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param isDarkMode (optional) 
+     * @return OK
+     */
+    profileUpdateDarkMode(isDarkMode: boolean | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/v1/Profile/dark-mode?";
+        if (isDarkMode === null)
+            throw new Error("The parameter 'isDarkMode' cannot be null.");
+        else if (isDarkMode !== undefined)
+            url_ += "isDarkMode=" + encodeURIComponent("" + isDarkMode) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            withCredentials: true,
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processProfileUpdateDarkMode(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processProfileUpdateDarkMode(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processProfileUpdateDarkMode(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
      * @return OK
      */
     profileGetAccountSessionInfo(): Observable<AccountSessionInfo> {
@@ -1113,6 +1276,58 @@ export class ProfileClient {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result200 = AccountSessionInfo.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    profileGetAccountSettings(): Observable<ProfileSettingResult> {
+        let url_ = this.baseUrl + "/api/v1/Profile/settings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            withCredentials: true,
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processProfileGetAccountSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processProfileGetAccountSettings(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ProfileSettingResult>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ProfileSettingResult>;
+        }));
+    }
+
+    protected processProfileGetAccountSettings(response: HttpResponseBase): Observable<ProfileSettingResult> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ProfileSettingResult.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1417,6 +1632,90 @@ export class ProfileCreateRequest {
         data["email"] = this.email;
         data["password"] = this.password;
         data["confirmPassword"] = this.confirmPassword;
+        return data;
+    }
+}
+
+export class ProfilePersonalUpdateRequest {
+    accountId?: number;
+    title?: string | undefined;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    email?: string | undefined;
+
+    init(_data?: any) {
+        if (_data) {
+            this.accountId = _data["accountId"];
+            this.title = _data["title"];
+            this.firstName = _data["firstName"];
+            this.lastName = _data["lastName"];
+            this.email = _data["email"];
+        }
+    }
+
+    static fromJS(data: any): ProfilePersonalUpdateRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProfilePersonalUpdateRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["accountId"] = this.accountId;
+        data["title"] = this.title;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["email"] = this.email;
+        return data;
+    }
+}
+
+export class ProfileSecurityUpdateRequest {
+    accountId?: number;
+    password!: string;
+
+    init(_data?: any) {
+        if (_data) {
+            this.accountId = _data["accountId"];
+            this.password = _data["password"];
+        }
+    }
+
+    static fromJS(data: any): ProfileSecurityUpdateRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProfileSecurityUpdateRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["accountId"] = this.accountId;
+        data["password"] = this.password;
+        return data;
+    }
+}
+
+export class ProfileSettingResult {
+    isDarkMode?: boolean;
+
+    init(_data?: any) {
+        if (_data) {
+            this.isDarkMode = _data["isDarkMode"];
+        }
+    }
+
+    static fromJS(data: any): ProfileSettingResult {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProfileSettingResult();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isDarkMode"] = this.isDarkMode;
         return data;
     }
 }

@@ -1,3 +1,5 @@
+using WebApi.Domain.Settings;
+
 namespace WebApi.Entities;
 
 public class Account : Entity
@@ -16,5 +18,7 @@ public class Account : Entity
     public DateTime? PasswordReset { get; set; }
     public DateTime CreatedDateTime { get; set; }
     public DateTime? Updated { get; set; }
+
+    public ProfileSetting? Settings { get; set; }
     public List<RefreshToken> RefreshTokens { get; set; } = new();
 }

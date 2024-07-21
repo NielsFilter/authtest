@@ -1,38 +1,32 @@
-﻿import { NgModule, APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+﻿import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-
 import { AppRoutingModule } from './app-routing.module';
-import { JwtInterceptor, ErrorInterceptor, appInitializer } from './_helpers';
 import { AppComponent } from './app.component';
-import { HomeComponent } from './home';
 import { ServiceClientModule } from 'src/shared/service-clients/service-client.module';
-import { AuthClient } from 'src/shared/service-clients/service-clients';
 import { AppSharedModule } from 'src/shared/app-shared.module';
-import { FooterComponent } from "./footer/footer.component";
+import { FooterComponent } from './footer/app-footer.component';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { appInitializer, JwtInterceptor } from './_helpers';
+import { AuthClient } from 'src/shared/service-clients/service-clients';
 
 @NgModule({
     imports: [
-    BrowserModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    AppRoutingModule,
-    ServiceClientModule,
-    AppSharedModule,
-    FormsModule,
-    FooterComponent
-],
-    declarations: [
-        AppComponent,
-        HomeComponent
+        CommonModule,
+        ReactiveFormsModule,
+        AppRoutingModule,
+        ServiceClientModule,
+        AppSharedModule,
+        FormsModule,
+        FooterComponent
     ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    declarations: [
+        AppComponent
+    ],
     providers: [
         { provide: APP_INITIALIZER, useFactory: appInitializer, deps: [AuthClient], multi: true },
-        { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-        { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
+        { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
     ],
-    bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,0 +1,14 @@
+﻿<div class="p-4">
+    <div class="container">
+        <h1>Hi {{account?.firstName}}!</h1>
+        <p>You're logged in with Angular 15 & JWT!!</p>
+        <button class="btn btn-primary" (click)="sendNotification()">Send notification</button>
+
+        <div>
+            <button (click)="showSuccess()" class="btn btn-success">Success</button>
+                    <button (click)="showWarn()" class="btn btn-warning">Warn</button>
+                    <button (click)="showInfo()" class="btn btn-info">Info</button>
+                    <button (click)="showError()" class="btn btn-danger">Error</button>
+        </div>
+    </div>
+</div>

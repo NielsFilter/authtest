@@ -4,9 +4,9 @@ import { AdminProfileClient, FilterPagedDto } from 'src/shared/service-clients/s
 import { Router, NavigationStart } from '@angular/router';
 
 @Component({
-    // TODO: selector: 'list-settings',
-    templateUrl: './list.component.html',
-    styleUrl: './list.component.less'
+    selector: 'admin-account-list',
+    templateUrl: './admin-account-list.component.html',
+    styleUrl: './admin-account-list.component.scss'
 })
 export class ListComponent implements OnInit {
     accounts: any[];
@@ -23,7 +23,7 @@ export class ListComponent implements OnInit {
     loadAccounts() {
         this.loading = true;
 
-        //TODO: 
+        //TODO:
         const input = new FilterPagedDto();
 
         this.adminProfileClient.adminProfileSearchAllPaged(input)
@@ -44,6 +44,6 @@ export class ListComponent implements OnInit {
     }
 
     editAccount(id: number) {
-     this.router.navigate(['admin/accounts/edit', id]);   
+     this.router.navigate(['admin/accounts/edit', id]);
     }
 }

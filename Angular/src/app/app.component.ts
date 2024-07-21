@@ -12,17 +12,17 @@ import { AuthService } from './_services/auth.service';
 import { AppComponentBase } from 'src/shared/common/app-component-base';
 
 @Component({
-  selector: 'app-root',
   templateUrl: 'app.component.html',
-styleUrl: 'app.component.scss'
+  styleUrl: 'app.component.scss'
  })
 export class AppComponent
   extends AppComponentBase
   implements AfterViewInit, OnInit
 {
   Role = Role;
-  sideCollapsed: Boolean = false;
+  sideCollapsed: Boolean = true;
   innerWidth: number;
+  mobileSize = 767.98;
 
   constructor(
     injector: Injector,
@@ -31,6 +31,9 @@ export class AppComponent
   ) {
     super(injector);
     this.innerWidth = 0;
+
+    console.log(window.innerWidth);
+    this.sideCollapsed = window.innerWidth > this.mobileSize ? false : true;
 
     //todo:
     //     console.log('starting connection');
@@ -46,7 +49,8 @@ export class AppComponent
   }
 
   ngOnInit() {
-    this.authService.autoLogin();
+    // console.log('auto login app');  
+    // this.authService.autoLogin();
   }
 
   logout() {
@@ -59,19 +63,26 @@ export class AppComponent
 
   @HostListener('window:resize', ['$event'])
   onResize() {
-    if (window.innerWidth <= 991) {
+    if (window.innerWidth <= this.mobileSize) {
       // screen is small
-      if (this.innerWidth > 991) {
+      if (this.innerWidth > this.mobileSize) {
         // screen was large, now reduced. Collapse side bar
         this.sideCollapsed = true;
       }
     } else {
       // screen is large
-      if (this.innerWidth <= 991) {
+      if (this.innerWidth <= this.mobileSize) {
         // screen was small, now increased. Expand side bar
         this.sideCollapsed = false;
       }
     }
     this.innerWidth = window.innerWidth;
+  }
+
+  menuClicked() {
+    if(this.innerWidth <= this.mobileSize && !this.sideCollapsed) {
+        // in mobile view the menu takes over the screen. Selecting an item should collapse the menu again
+        this.sideCollapsed = true;
+    }
   }
 }

@@ -17,8 +17,4 @@
       <ProjectReference Include="..\WebApi.Domain\WebApi.Domain.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Migrations\" />
-    </ItemGroup>
-
 </Project>

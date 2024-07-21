@@ -28,6 +28,8 @@
     
     <ItemGroup>
       <Folder Include="Models\Notifications\" />
+      <Folder Include="Profiles\Models\" />
+      <Folder Include="Settings\Models\" />
     </ItemGroup>
 
 </Project>

@@ -24,20 +24,19 @@ export class AuthService {
   account$: BehaviorSubject<AccountDto | null> = new BehaviorSubject<AccountDto | null>(null);
   auth$: BehaviorSubject<AuthenticateDto | null> = new BehaviorSubject<AccountDto | null>(null);
 
-  refreshTokenTimeout: NodeJS.Timeout;
-
   constructor(
     private router: Router,
     private authClient: AuthClient,
     private storageService: StorageService
   ) {}
 
-  autoLogin() {
+  autoLogin() : boolean {
     const authData = this.getStoredAuthResult();
     if (authData == null) {
-      return;
+      return false;
     }
     this.setAuthResult(authData);
+    return true;
   }
 
   login(authRequest: AuthenticateRequest): Observable<AuthenticateDto> {
@@ -54,6 +53,7 @@ export class AuthService {
   }
 
   private setAuthResult(res: AuthenticationResult | null) {
+    console.log('setting auth result', res);
     this.auth$.next(res?.authenticate ?? null);
     this.account$.next(res?.account ?? null);
   }
@@ -72,7 +72,7 @@ export class AuthService {
     this.account$.next(account);
   }
 
-  refreshToken(): Observable<AuthenticationResult> {
+  refreshToken(): Observable<AuthenticationResult> { 
     const authData = this.getStoredAuthResult();
     if (authData?.authenticate == null) {
       return EMPTY;
@@ -82,10 +82,7 @@ export class AuthService {
       .authRefreshToken(authData.authenticate.refreshToken)
       .pipe(
         take(1),
-        tap((res) => {
-          this.updateAuthDetails(res);
-          //todo: this.setAuthResult(res);
-        })
+        tap((res) => this.updateAuthDetails(res))
       );
   }
 

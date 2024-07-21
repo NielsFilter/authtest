@@ -3,9 +3,9 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 
 import {AdminRoutingModule} from './admin-routing.module';
-import {SubNavComponent} from './subnav.component';
-import {LayoutComponent} from './layout.component';
-import {OverviewComponent} from './overview.component';
+import {AdminSubNavComponent} from './admin-subnav.component';
+import {AdminLayoutComponent} from './admin-layout.component';
+import {AdminOverviewComponent} from './admin-overview.component';
 import { AppSharedModule } from 'src/shared/app-shared.module';
 
 @NgModule({
@@ -16,9 +16,9 @@ import { AppSharedModule } from 'src/shared/app-shared.module';
         AdminRoutingModule
     ],
     declarations: [
-        SubNavComponent,
-        LayoutComponent,
-        OverviewComponent
+        AdminSubNavComponent,
+        AdminLayoutComponent,
+        AdminOverviewComponent
     ]
 })
 export class AdminModule { }

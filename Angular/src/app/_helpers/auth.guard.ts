@@ -26,6 +26,8 @@ export const AuthGuard: CanActivateFn = (route, state) => {
         return true;
       }
 
+console.log('not logged in', account);
+
       // not logged in so redirect to login page with the return url
       router.navigate(['/account/login'], {
         queryParams: { returnUrl: state.url },
