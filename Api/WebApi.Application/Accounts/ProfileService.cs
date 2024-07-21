@@ -124,6 +124,10 @@ public class ProfileService(
         account.Title = input.Title;
         account.FirstName = input.FirstName;
         account.LastName = input.LastName;
+        if (input.Image != null)
+        {
+            account.Image = input.Image;   
+        }
         await _accountRepository.Update(account);
         return await MapAccountDto(account);
     }

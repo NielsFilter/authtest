@@ -178,7 +178,7 @@
             </a>
 
             <a class="nav-link dropdown-toggle d-inline-block" href="#" data-bs-toggle="dropdown"  data-bs-target="#profileDropDown">
-              <img src="assets/img/avatars/avatar.jpg" class="avatar img-fluid rounded me-1" alt="{{account!.firstName}} {{account!.lastName}}" /> 
+              <img [src]="profileImage" class="avatar img-fluid rounded me-1" alt="{{account!.firstName}} {{account!.lastName}}" /> 
               <span class="d-none d-sm-inline-block">{{account!.firstName}} {{account!.lastName}}</span> 
             </a>
             <div class="dropdown-menu dropdown-menu-end" id="profileDropDown">

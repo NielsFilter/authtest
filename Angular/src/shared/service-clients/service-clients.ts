@@ -1345,6 +1345,7 @@ export class AccountDto {
     firstName?: string | undefined;
     lastName?: string | undefined;
     email?: string | undefined;
+    image?: string | undefined;
     roles?: string[] | undefined;
     created?: Date;
     updated?: Date | undefined;
@@ -1357,6 +1358,7 @@ export class AccountDto {
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
             this.email = _data["email"];
+            this.image = _data["image"];
             if (Array.isArray(_data["roles"])) {
                 this.roles = [] as any;
                 for (let item of _data["roles"])
@@ -1382,6 +1384,7 @@ export class AccountDto {
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["email"] = this.email;
+        data["image"] = this.image;
         if (Array.isArray(this.roles)) {
             data["roles"] = [];
             for (let item of this.roles)
@@ -1641,6 +1644,7 @@ export class ProfilePersonalUpdateRequest {
     title?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
+    image?: string | undefined;
     email?: string | undefined;
 
     init(_data?: any) {
@@ -1649,6 +1653,7 @@ export class ProfilePersonalUpdateRequest {
             this.title = _data["title"];
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
+            this.image = _data["image"];
             this.email = _data["email"];
         }
     }
@@ -1666,6 +1671,7 @@ export class ProfilePersonalUpdateRequest {
         data["title"] = this.title;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
+        data["image"] = this.image;
         data["email"] = this.email;
         return data;
     }

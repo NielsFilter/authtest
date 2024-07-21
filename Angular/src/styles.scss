@@ -132,3 +132,8 @@ $danger:        #dc3545 !default;
 .form-switch.form-switch-xl {
   @include switch('xl');
 }
+
+// cards - remove border
+.card {
+  border: none !important;
+}

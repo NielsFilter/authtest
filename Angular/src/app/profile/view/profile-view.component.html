@@ -4,7 +4,7 @@
         <div class="col-xs-12">
             <div class="card">
                 <div class="card-body text-center">
-                    <img src="../../assets/img/avatars/avatar-4.jpg" alt="Profile" class="img-fluid rounded-circle mb-2" width="128" height="128">
+                    <img [src]="profileImage" alt="Profile" class="img-fluid rounded-circle mb-2" width="300" height="300">
                     <h5 class="card-title mb-0">{{account!.title}} {{account!.firstName}} {{account!.lastName}}</h5>
                     <div class="text-muted mb-2">{{account!.email}}</div>
                     <a routerLink="personal" class="btn btn-primary">Personal Info</a>

@@ -12,6 +12,7 @@ export abstract class AppComponentBase implements OnDestroy {
 
     defaultPageSize: number = 10;
     account: AccountDto | null;
+    profileImage: string = 'https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg';
     profileSettings: ProfileSettingResult | null;
     darkTheme: string = "light";
     isAdmin: boolean = false;
@@ -28,6 +29,7 @@ export abstract class AppComponentBase implements OnDestroy {
             // update the component's property
             res => { 
                 this.account = res ?? null;
+                this.profileImage = this.account?.image ?? 'https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg';
                 this.isAdmin = this.account?.roles != null && this.account.roles.indexOf(Role.Admin) > -1;
             }
         );

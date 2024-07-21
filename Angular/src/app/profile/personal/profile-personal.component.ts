@@ -20,7 +20,7 @@ export class ProfilePersonalComponent
   extends AppComponentBase
   implements OnInit
 {
-  imageSrc: string = 'https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg';
+  imageSrc: string;
   form!: FormGroup;
   submitting = false;
   submitted = false;
@@ -38,11 +38,13 @@ export class ProfilePersonalComponent
   }
 
   ngOnInit() {
+    this.imageSrc = this.account!.image ?? 'https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg';
     this.form = this.formBuilder.group({
       title: [this.account!.title, Validators.required],
       firstName: [this.account!.firstName, Validators.required],
       lastName: [this.account!.lastName, Validators.required],
       email: [this.account!.email, [Validators.required, Validators.email]],
+      image: [this.account!.image]
     });
   }
 
@@ -86,7 +88,9 @@ export class ProfilePersonalComponent
   }
 
   preview(files: any) {
+    console.log('file selected');
     if (files.length === 0) {
+        console.log("OH NO!");
       return;
     }
 
