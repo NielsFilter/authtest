@@ -1,0 +1,22 @@
+﻿<div class="row">
+  <div class="card">
+    <div class="card-body">
+      <h3 class="pt-3">Preferences</h3>
+      <div class="row">
+        <div class="mb-3">
+          <div class="form-check form-switch form-switch-md">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              [disabled]="submitting"
+              [checked]="isDarkMode"
+              role="switch"
+              (change)="toggleDarkMode($event)"
+            />
+            <label class="form-check-label ms-3 mt-1" for="flexSwitchCheckDefault">Dark mode</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
